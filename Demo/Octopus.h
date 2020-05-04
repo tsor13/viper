@@ -44,8 +44,21 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
     masses.clear();
     compliances.clear();
 
+    // scale
+    //auto scale = 0.01f
+
     // Define sphere vals
-    // TODO - what is sphere vals?
+    // (x, y, z, r)
+    std::map<std::string, Vec4> sphere_vals = {
+        {"tentacle1", Vec4(-23.32*0.35, -3.21*0.35,
+                      0*0.35, 2*0.35)},
+        {"tentacle2", Vec4(-7.262*0.35, -2.529*0.35,
+                          0*0.35, 1.8*0.35)},
+        {"tentacle3", Vec4(7.596*0.35, -1.870*0.35,
+                          0*0.35, 1.3*0.35)},
+        {"tentacle4", Vec4(22.88*0.35, -0.862*0.35,
+                          0*0.35, 0.4*0.35)}};
+    /*
     std::map<std::string, Vec4> sphere_vals = {
         {"knee", Vec4(-0.35362565517425537, -0.813965916633606,
                       0.017165500670671463, 0.14786656200885773)},
@@ -121,8 +134,10 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
                          0.5920186638832092)},
         {"head_tb", Vec4(0.0, 0.18671098351478577, 1.2015498876571655,
                          0.5920186638832092)}};
+    */
 
     // define masses
+    /*
     std::map<std::string, float> sphere_masses = {
         {"foot", 0.3f},      {"foot.001", 0.3f},  {"foot.002", 0.3f},
         {"foot.003", 0.3f},  {"foot.004", 0.3f},  {"foot.005", 0.3f},
@@ -137,6 +152,15 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         {"hip.006", 0.3f},   {"hip.007", 0.3f},   {"eye_l", 0.1f},
         {"eye_r", 0.1f},     {"root", 1.0f},      {"head_b", 1.0f},
         {"head_tf", 1.0f},   {"head_tb", 1.0f}};
+        */
+    /*
+    std::map<std::string, float> sphere_masses = {
+        {"tentacle1", 8.0f}, {"tentacle2", 5.83f},  {"tentacle3", 2.197f},
+        {"tentacle4", 0.4f}};
+        */
+    std::map<std::string, float> sphere_masses = {
+        {"tentacle1", 8.0f}, {"tentacle2", 5.83f},  {"tentacle3", 2.197f},
+        {"tentacle4", 0.4f}};
 
     // make ids for each sphere
     std::map<std::string, int> sphere_ids;
@@ -149,6 +173,12 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
 
     // make tuples for each pill connection?
     using tuple = std::tuple<Vec2i, bool, float>;
+    std::vector<tuple> pill_flags = {
+        tuple(Vec2i(sphere_ids["tentacle1"], sphere_ids["tentacle2"]), true, 0.0f),
+        tuple(Vec2i(sphere_ids["tentacle2"], sphere_ids["tentacle3"]), true, 0.0f),
+        tuple(Vec2i(sphere_ids["tentacle3"], sphere_ids["tentacle4"]), true, 0.0f),
+    };
+    /*
     std::vector<tuple> pill_flags = {
         tuple(Vec2i(sphere_ids["root"], sphere_ids["head_b"]), true, 0.0f),
         tuple(Vec2i(sphere_ids["head_b"], sphere_ids["eye_l"]), true, 0.0f),
@@ -209,6 +239,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         tuple(Vec2i(sphere_ids["root"], sphere_ids["hip.007"]), true, 1e-4f),
         tuple(Vec2i(sphere_ids["root"], sphere_ids["hip"]), true, 1e-4f),
     };
+    */
 
     // TODO - idk what is
     for (int i = 0; i < pill_flags.size(); ++i) {
