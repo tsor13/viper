@@ -12,13 +12,17 @@
 
 #pragma once
 
+// include packages
 #include <map>
 #include <vector>
 
 #include <Eigen/Dense>
 
+// make cow namespace
 namespace cow {
 
+// define vectors
+// TODO - what represent?
 using Vec2 = Eigen::Vector2f;
 using Vec3 = Eigen::Vector3f;
 using Vec4 = Eigen::Vector4f;
@@ -27,17 +31,21 @@ using Vec2i = Eigen::Vector2i;
 using Vec3i = Eigen::Vector3i;
 using Vec4i = Eigen::Vector4i;
 
+// make an octopus given spheres, pills, etc
 inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
                         std::vector<int> &control_pills,
                         std::vector<float> &masses,
                         std::vector<float> &compliances) {
 
+    // TODO - what is clearing?
     spheres.clear();
     pills.clear();
     control_pills.clear();
     masses.clear();
     compliances.clear();
 
+    // Define sphere vals
+    // TODO - what is sphere vals?
     std::map<std::string, Vec4> sphere_vals = {
         {"knee", Vec4(-0.35362565517425537, -0.813965916633606,
                       0.017165500670671463, 0.14786656200885773)},
@@ -114,6 +122,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         {"head_tb", Vec4(0.0, 0.18671098351478577, 1.2015498876571655,
                          0.5920186638832092)}};
 
+    // define masses
     std::map<std::string, float> sphere_masses = {
         {"foot", 0.3f},      {"foot.001", 0.3f},  {"foot.002", 0.3f},
         {"foot.003", 0.3f},  {"foot.004", 0.3f},  {"foot.005", 0.3f},
@@ -129,6 +138,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         {"eye_r", 0.1f},     {"root", 1.0f},      {"head_b", 1.0f},
         {"head_tf", 1.0f},   {"head_tb", 1.0f}};
 
+    // make ids for each sphere
     std::map<std::string, int> sphere_ids;
     int i = 0;
     for (auto pair : sphere_vals) {
@@ -137,6 +147,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         masses.push_back(sphere_masses[pair.first]);
     }
 
+    // make tuples for each pill connection?
     using tuple = std::tuple<Vec2i, bool, float>;
     std::vector<tuple> pill_flags = {
         tuple(Vec2i(sphere_ids["root"], sphere_ids["head_b"]), true, 0.0f),
@@ -199,6 +210,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         tuple(Vec2i(sphere_ids["root"], sphere_ids["hip"]), true, 1e-4f),
     };
 
+    // TODO - idk what is
     for (int i = 0; i < pill_flags.size(); ++i) {
         pills.push_back(std::get<0>(pill_flags[i]));
         compliances.push_back(std::get<2>(pill_flags[i]));

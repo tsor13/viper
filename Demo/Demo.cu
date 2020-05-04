@@ -10,6 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// standard imports
 #include <cfloat>
 #include <fstream>
 #include <iostream>
@@ -18,12 +19,16 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #define USE_PNG
 
+// include OpenGP and OpenGL
 #include <OpenGP/GL/Application.h>
 #include <OpenGP/GL/Components/GUICanvasComponent.h>
 #include <OpenGP/GL/ImguiRenderer.h>
 #include <OpenGP/Image/Image.h>
 
+// include Octopus
+// CHANGE
 #include "OctopusComponent.h"
+// TODO - do I need to modify Scene.h?
 #include "Scene.h"
 
 #include "CollisionGrid.cuh"
@@ -31,16 +36,22 @@
 #define OPENGP_IMPLEMENT_ALL_IN_THIS_FILE
 #include <OpenGP/util/implementations.h>
 
+// namespace OpenGP
 using namespace OpenGP;
 
+// main
 int main(int argc, char **argv) {
 
+    // constant shadow size
     int shadow_size = 2048;
 
+    // make OpenGP Application
     Application app;
 
+    // TODO - From Scene.h? Or OpenGP?
     Scene scene;
 
+    // make light
     auto &light_entity = scene.create_entity_with<CameraComponent>();
     light_entity.get<TransformComponent>().set_forward(
         Vec3(-1, -2, 0).normalized());
@@ -50,6 +61,7 @@ int main(int argc, char **argv) {
         (light_entity.get_projection(shadow_size, shadow_size) *
          light_entity.get_view());
 
+    // make floor
     auto &floor_entity = scene.create_entity_with<WorldRenderComponent>();
     auto &floor_renderer = floor_entity.set_renderer<SurfaceMeshRenderer>();
     floor_renderer.get_gpu_mesh().set_vpoint(
@@ -59,6 +71,7 @@ int main(int argc, char **argv) {
         {Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0)});
     floor_renderer.get_gpu_mesh().set_triangles({0, 1, 2, 1, 2, 3});
 
+    // define floormat material
     Material floormat(R"GLSL(
 
         uniform sampler2D shadow_map;
@@ -169,9 +182,13 @@ int main(int argc, char **argv) {
     floor_renderer.set_material(floormat);
     floor_renderer.rebuild();
 
+    // make viper scene
     viper::Scene sim_scene;
 
+    // Set OctopusComponent property to current scene
     OctopusComponent::v_scene = &sim_scene;
+    // TODO - what is octoswarm??
+    // CHANGE
     auto &octoswarm = scene.create_entity_with<OctopusComponent>();
 
     octoswarm.renderer->get_material().set_property("shadow_matrix",
@@ -218,8 +235,10 @@ int main(int argc, char **argv) {
     auto &c_entity = scene.create_entity_with<TrackballComponent>();
     c_entity.oriented = true;
 
+    // constants - window?
     int ww = 3840, wh = 1080;
 
+    // make framebuffer
     Framebuffer fb, fb_shadow;
     RGB8Texture color_map, color_map_shadow;
     D32FTexture depth_map, depth_map_shadow;
@@ -242,15 +261,20 @@ int main(int argc, char **argv) {
 
     RGB8Texture colmap;
     Image<Eigen::Matrix<uint8_t, 3, 1>> colmap_cpu(2048, 2048);
+    // Read in texture binary
+    // TODO - what is it doing here?
+    // CHANGE?
     std::ifstream("texture.bin", std::ios::binary).read(
         reinterpret_cast<char*>(&colmap_cpu(0, 0)), 12582912);
     colmap.upload(colmap_cpu);
 
     FullscreenQuad fsquad;
 
+    // TODO - change defaults? Does this change the view?
     bool show_pills = false;
     bool splitscreen = false;
 
+    // function to set pill visibility of octopi
     auto set_pill_visibility = [&](bool visible) {
         show_pills = visible;
         octoswarm.render_comp->visible = !visible;
@@ -258,6 +282,7 @@ int main(int argc, char **argv) {
         octoswarm.vis_update();
     };
 
+    // function to draw scene
     auto draw_scene = [&](int width, int height, int x, int y) {
         //======================================================================
         // Draw shadow map
@@ -280,10 +305,12 @@ int main(int argc, char **argv) {
 
         glActiveTexture(GL_TEXTURE0);
 
+        // set up camera
         auto &cam = c_entity.get<CameraComponent>();
 
         cam.draw(color_map.get_width(), color_map.get_height(), 0, 0, false);
 
+        // if sphere component is visible
         if (octoswarm.sphere_render_comp->visible) {
             RenderContext context;
 
@@ -327,9 +354,11 @@ int main(int argc, char **argv) {
         fsquad.draw_texture(color_map);
     };
 
+    // make window function
     auto &window = app.create_window([&](Window &window) {
         std::tie(ww, wh) = window.get_size();
 
+        // TODO - what is this variable? splitscreen
         int fbw_new = splitscreen ? ww / 2 : ww;
         int fbh_new = wh;
 
@@ -340,30 +369,43 @@ int main(int argc, char **argv) {
             realloc(fbw_new, fbh_new);
         }
 
+        // if splitscreen, do half and half pill vilibility
         if (splitscreen) {
+            // draw left half pills invisible
             set_pill_visibility(false);
             draw_scene(ww / 2, wh, 0, 0);
+            // draw right half pills visible
             set_pill_visibility(true);
             draw_scene(ww / 2, wh, ww / 2, 0);
         } else {
+            // if not split screen, call octoswarm.vis_update
+            // TODO - what is vis_udpate?
             octoswarm.vis_update();
             draw_scene(ww, wh, 0, 0);
         }
     });
 
+    // set window size and title
     window.set_size(ww, wh);
     window.set_title("VIPER Demo");
 
+    // set up input
+    // TODO - keyboard / mouse?
     auto &input = window.get_input();
 
+    // TODO - camera position? Could be important
+    // CHANGE
     c_entity.get<CameraComponent>().set_window(window);
     c_entity.center = Vec3(0, 1, 0);
     c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
 
+    // TODO - what is this
     auto &bsphere_entity = scene.create_entity_with<WorldRenderComponent>();
     auto &bsphere_renderer = bsphere_entity.set_renderer<SphereMeshRenderer>();
 
+    // get mouse position
     auto get_mouse_ray = [&](Vec3 &eye, Vec3 &dir) {
+        // get position
         Vec2 pos = input.mouse_position;
         pos[1] = wh - pos[1];
 
@@ -372,6 +414,7 @@ int main(int argc, char **argv) {
 
         Vec4 cs(pos[0], pos[1], 0.1, 1);
 
+        // TODO - what do? rotate?
         auto &cam = c_entity.get<CameraComponent>();
         Mat4x4 inv_mat = (cam.get_projection(w, wh) * cam.get_view()).inverse();
 
@@ -382,6 +425,7 @@ int main(int argc, char **argv) {
         dir = (p - eye).normalized();
     };
 
+    // variables to keep track of runtime performance
     int framerate = 0;
     double frametime = 0;
     double sim_frametime = 0;
@@ -390,6 +434,7 @@ int main(int argc, char **argv) {
 
     int it_count = 10;
 
+    // TODO - change?
     bool hide_gui = false;
     bool simulating = true;
     bool single_step = false;
@@ -397,7 +442,9 @@ int main(int argc, char **argv) {
 
     std::vector<float> framerates(120);
 
+    // defaults for settings and physics
     auto set_defaults = [&]() {
+        // TODO - change this to show pills??
         show_pills = false;
         octoswarm.render_comp->visible = !show_pills;
         octoswarm.sphere_render_comp->visible = show_pills;
@@ -408,6 +455,7 @@ int main(int argc, char **argv) {
 
     set_defaults();
 
+    // Create GUI
     auto &canvas = scene.create_entity_with<GUICanvasComponent>();
     canvas.set_action([&]() {
         if (hide_gui)
@@ -468,6 +516,7 @@ int main(int argc, char **argv) {
 
         if (ImGui::ListBox("Scenes", &octoswarm.scene_index, scenes,
                            sizeof(scenes) / sizeof(scenes[0]))) {
+            // TODO - resets octoswarm from beginning of simulation? could be important
             octoswarm.reset();
         }
 
@@ -485,6 +534,7 @@ int main(int argc, char **argv) {
         ImGui::End();
     });
 
+    // place camera
     canvas.set_camera(c_entity.get<CameraComponent>());
 
     int chambered_cow = 0;
@@ -492,6 +542,7 @@ int main(int argc, char **argv) {
     long frame = 0;
     long sim_frame = 0;
 
+    // keep track of statistics
     double last_time = glfwGetTime();
     double frame_avg = 0;
     double sim_frame_avg = 0;
@@ -499,11 +550,13 @@ int main(int argc, char **argv) {
     int held = 0;
     int selected = -1;
 
+    // TODO - idk what this is 
     bool swapped_pills = false;
     bool swapped_pause = false;
     bool swapped_window = false;
     bool recentered = false;
 
+    // app event listener
     app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
             SphereMesh temp_smesh;
@@ -513,13 +566,18 @@ int main(int argc, char **argv) {
             bsphere_entity.visible = bsphere_vis;
             bsphere_renderer.upload_mesh(temp_smesh);
 
+            // if mouseclick?
             if (input.get_mouse(0)) {
                 Vec3 eye, dir;
                 get_mouse_ray(eye, dir);
 
+                // if just selected
                 if (selected == -1) {
+                    // TODO - if click on octopus, move it around?
                     selected = octoswarm.intersect(eye, dir);
+                    // set velocity? to 0
                     sim_scene.state.xa[selected] = 0;
+                // if octopus already selected
                 } else {
 
                     Vec3 p = sim_scene.state.x[selected];
@@ -531,11 +589,14 @@ int main(int argc, char **argv) {
                     sim_scene.state.x[selected] = new_pos;
                     sim_scene.state.xp[selected] = sim_scene.state.x[selected];
                 }
+            // unselect
             } else if (selected != -1) {
                 sim_scene.state.xa[selected] = 1;
                 selected = -1;
             }
 
+            // TODO - idk what the get_mouse 1 is
+            // move something around?
             if (input.get_mouse(1)) {
                 Image<float> depth_im;
                 depth_map.download(depth_im);
@@ -569,6 +630,7 @@ int main(int argc, char **argv) {
                 recentered = false;
             }
 
+            // F10 changes pill visibility
             if (input.get_key(GLFW_KEY_F10)) {
                 if (!swapped_pills) {
                     set_pill_visibility(!show_pills);
@@ -577,6 +639,7 @@ int main(int argc, char **argv) {
             } else {
                 swapped_pills = false;
             }
+            // F11 pause/unpause
             if (input.get_key(GLFW_KEY_F11)) {
                 if (!swapped_pause) {
                     simulating = !simulating;
@@ -585,6 +648,7 @@ int main(int argc, char **argv) {
             } else {
                 swapped_pause = false;
             }
+            // F12 hides GUI
             if (input.get_key(GLFW_KEY_F12)) {
                 if (!swapped_window) {
                     hide_gui = !hide_gui;
@@ -594,8 +658,11 @@ int main(int argc, char **argv) {
                 swapped_window = false;
             }
 
+            // Space spits out new octopus
             if (input.get_key(GLFW_KEY_SPACE)) {
+                // every 5 updates
                 if ((held % 5) == 0) {
+                    // TODO - important, makes new octopus
                     Vec3 p = c_entity.get<TransformComponent>().position;
                     Vec3 v = c_entity.get<TransformComponent>().forward();
                     octoswarm.set_position(chambered_cow, p + 3 * v, v);
@@ -607,6 +674,7 @@ int main(int argc, char **argv) {
                 held = 0;
             }
 
+            // keep track of frame statistics
             double frame_time = 0.0;
             double this_time = last_time;
             while (frame_time < 0.016667) {
@@ -627,7 +695,10 @@ int main(int argc, char **argv) {
                 frame_avg = 0;
             }
 
+            // if simulating or supposed to take one step
             if (simulating || single_step) {
+                // simulate one step forward
+                // TODO - important
                 double sim_time =
                     sim_scene.step(playback / 60.f, it_count, true);
 
