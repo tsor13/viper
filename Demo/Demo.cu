@@ -273,6 +273,7 @@ int main(int argc, char **argv) {
     // TODO - change defaults? Does this change the view?
     bool show_pills = false;
     bool splitscreen = false;
+    // bool splitscreen = true;
 
     // function to set pill visibility of octopi
     auto set_pill_visibility = [&](bool visible) {
@@ -445,7 +446,8 @@ int main(int argc, char **argv) {
     // defaults for settings and physics
     auto set_defaults = [&]() {
         // TODO - change this to show pills??
-        show_pills = false;
+        // show_pills = false;
+        show_pills = true;
         octoswarm.render_comp->visible = !show_pills;
         octoswarm.sphere_render_comp->visible = show_pills;
         it_count = 10;
