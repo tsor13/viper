@@ -527,7 +527,11 @@ class OctopusComponent : public Component {
                                             v_ids[cow_id][pill[1]]);
                 p_ids[cow_id].push_back(p_id);
 
+                // TODO - change this to activate muscle. Not sure where to change this dynamically though?
+                // rest distance - defaults to euclidean distance
                 float d = (spheres[pill[0]] - spheres[pill[1]]).norm();
+                // stretch out
+                // d *= 2;
 
                 data.volume_constraints.push_back(
                     v_scene->constraints.volume.size());
