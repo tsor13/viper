@@ -50,18 +50,18 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
     // Define sphere vals
     // (x, y, z, r)
     std::map<std::string, Vec4> sphere_vals = {
-        {"tentacle1.1", 0.25*Vec4(-23.8, -2.45, 1.28, 1.2)},
-        {"tentacle1.2", 0.25*Vec4(-23.8, -2.45, -1.15, 1.2)},
-        {"tentacle1.3", 0.25*Vec4(-23.8, -4.53, 0.13, 1.2)},
-        {"tentacle2.1", 0.25*Vec4(-9.0, -1.72, 1.18, 1.1)},
-        {"tentacle2.2", 0.25*Vec4(-9.0, -1.72, -0.98, 1.1)},
-        {"tentacle2.3", 0.25*Vec4(-9.0, -3.62, 0.16, 1.1)},
-        {"tentacle3.1", 0.25*Vec4(8.0, -1.0, 0.66, 0.8)},
-        {"tentacle3.2", 0.25*Vec4(8.0, -1.0, -.88, 0.8)},
-        {"tentacle3.3", 0.25*Vec4(8.0, -2.38, -0.1, 0.8)},
-        {"tentacle4.1", 0.25*Vec4(24.0, -0.56, 0.08, 0.2)},
-        {"tentacle4.2", 0.25*Vec4(24.0, -0.56, -0.31, 0.2)},
-        {"tentacle4.3", 0.25*Vec4(24.0, -0.89, -0.12, 0.2)}
+        {"tentacle1.1", 0.35*Vec4(-23.8, -2.45, 1.28, 1.2)},
+        {"tentacle1.2", 0.35*Vec4(-23.8, -2.45, -1.15, 1.2)},
+        {"tentacle1.3", 0.35*Vec4(-23.8, -4.53, 0.13, 1.2)},
+        {"tentacle2.1", 0.35*Vec4(-9.0, -1.72, 1.18, 1.1)},
+        {"tentacle2.2", 0.35*Vec4(-9.0, -1.72, -0.98, 1.1)},
+        {"tentacle2.3", 0.35*Vec4(-9.0, -3.62, 0.16, 1.1)},
+        {"tentacle3.1", 0.35*Vec4(8.0, -1.0, 0.66, 0.8)},
+        {"tentacle3.2", 0.35*Vec4(8.0, -1.0, -.88, 0.8)},
+        {"tentacle3.3", 0.35*Vec4(8.0, -2.38, -0.1, 0.8)},
+        {"tentacle4.1", 0.35*Vec4(24.0, -0.56, 0.08, 0.2)},
+        {"tentacle4.2", 0.35*Vec4(24.0, -0.56, -0.31, 0.2)},
+        {"tentacle4.3", 0.35*Vec4(24.0, -0.89, -0.12, 0.2)}
     };
   /*
     std::map<std::string, Vec4> sphere_vals = {
@@ -192,6 +192,7 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
 
     // make tuples for each pill connection?
     using tuple = std::tuple<Vec2i, bool, float>;
+    // last element in tuple is compliance, lower is stiffer, higher is more compliant
     std::vector<tuple> pill_flags = {
         tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.2"]), true, 1e-3f),
         tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.3"]), true, 1e-3f),
@@ -209,17 +210,17 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle4.3"]), true, 1e-3f),
         tuple(Vec2i(sphere_ids["tentacle4.2"], sphere_ids["tentacle4.3"]), true, 1e-3f),
 
-        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle2.1"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle2.2"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle1.3"], sphere_ids["tentacle2.3"]), true, 0.0f),
+        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle2.1"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle2.2"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle1.3"], sphere_ids["tentacle2.3"]), true, 0.1f),
 
-        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle3.1"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle3.2"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle2.3"], sphere_ids["tentacle3.3"]), true, 0.0f),
+        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle3.1"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle3.2"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle2.3"], sphere_ids["tentacle3.3"]), true, 0.1f),
 
-        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle4.1"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle4.2"]), true, 0.0f),
-        tuple(Vec2i(sphere_ids["tentacle3.3"], sphere_ids["tentacle4.3"]), true, 0.0f),
+        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle4.1"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle4.2"]), true, 0.1f),
+        tuple(Vec2i(sphere_ids["tentacle3.3"], sphere_ids["tentacle4.3"]), true, 0.1f),
     };
     /*
     std::vector<tuple> pill_flags = {
