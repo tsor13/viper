@@ -447,8 +447,8 @@ int main(int argc, char **argv) {
     // defaults for settings and physics
     auto set_defaults = [&]() {
         // TODO - change this to show pills??
-        // show_pills = false;
-        show_pills = true;
+        show_pills = false;
+        // show_pills = true;
         octoswarm.render_comp->visible = !show_pills;
         octoswarm.sphere_render_comp->visible = show_pills;
         it_count = 10;
