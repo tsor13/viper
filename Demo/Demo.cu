@@ -271,6 +271,7 @@ int main(int argc, char **argv) {
     FullscreenQuad fsquad;
 
     // TODO - change defaults? Does this change the view?
+    // No, change where says set_defaults
     bool show_pills = false;
     bool splitscreen = false;
     // bool splitscreen = true;
