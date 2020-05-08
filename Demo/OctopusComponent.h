@@ -82,7 +82,7 @@ class OctopusComponent : public Component {
     const int n_cows = 90;
     int n_active = 90;
 
-    // what is this?
+    // which scene - normal, pillars, etc.
     int scene_index = 0;
 
     // TODO - test
@@ -683,26 +683,33 @@ class OctopusComponent : public Component {
             cow_data.push_back(data);
         }
 
+        // TODO - where does get transforms come from?
         init_transforms = get_transforms();
         renderer->upload_mesh(mesh, get_transforms());
+        // TODO - commenting out doesn't seem to affect?
         renderer->get_gpu_mesh().set_vtexcoord(
             mesh.get_vertex_property<Vec2>("v:texcoord").vector());
 
+        // defined below
         reset();
 
         smesh.clear();
 
         int offset = 0;
+        // for j in 0, 1, ..., n_cows
         for (int j = 0; j < n_cows; ++j) {
+            // add spheres to smesh
             for (int i = 0; i < spheres.size(); ++i) {
                 auto &v = spheres[i];
                 smesh.add_vertex(v);
             }
 
+            // add control pills to smesh
             for (int i : control_pills) {
                 auto pill = all_pills[i];
                 smesh.add_edge(V(pill[0] + offset), V(pill[1] + offset));
             }
+            // increase offset by size of spheres
             offset += spheres.size();
         }
 
@@ -710,15 +717,22 @@ class OctopusComponent : public Component {
     }
 
     void reset() {
+        // reset the current scene
         v_scene->reset();
 
+        // idk
         bool pillars_active;
 
+        // 0 - nothing
+        // 1 - pillars
+        // 2 - cannonballs
+        // 3 - place all in same spot then explode
         switch (scene_index) {
         case 0: {
             cannonballs_active = false;
             pillars_active = false;
 
+            // place each octopus randomly
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
                 set_position(cow_id, Vec3::Random() * 10 + Vec3(0, 12, 0),
                              Vec3::Zero());
@@ -756,13 +770,17 @@ class OctopusComponent : public Component {
         }
         }
 
+        // make cannnons visible if bool
         cannonball_render_comp->visible = cannonballs_active;
+        // make pillars visible if bool
         pillar_render_comp->visible = pillars_active;
 
+        // for each octopus, set cannonball_enabled
         for (auto &data : cow_data) {
             data.set_cannonball_enabled(cannonballs_active, *v_scene);
         }
 
+        // for each canonball, set active or not
         for (int id : cannonball_ids) {
             v_scene->state.xa[id] = cannonballs_active;
             v_scene->state.xai[id] = cannonballs_active;
@@ -772,6 +790,7 @@ class OctopusComponent : public Component {
             }
         }
 
+        // something with pillars
         for (int i = 0; i < pillar_ids.size(); ++i) {
             float offset = pillars_active ? 0 : -5;
             v_scene->state.x[pillar_ids[i]][1] =
@@ -779,8 +798,11 @@ class OctopusComponent : public Component {
         }
     }
 
+    // nothing on update?
+    // TODO - change constraints here? to contract muscles?
     void update() {}
 
+    // intersection algorithm
     int intersect(Vec3 eye, Vec3 dir) {
         float best_dist = FLT_MAX;
         int best_id = -1;
@@ -817,15 +839,20 @@ class OctopusComponent : public Component {
         return best_id;
     }
 
+    // TODO - when is this called?
     void vis_update() {
 
+        // if render sphere
         if (sphere_render_comp->visible) {
 
+            // get vertex property point
             auto vpoint = smesh.get_vertex_property<Vec4>("v:point");
 
+            // for each cow
             for (int j = 0; j < n_cows; ++j) {
+                // for each sphere
                 for (int i = 0; i < spheres.size(); ++i) {
-
+                    // idk?
                     vpoint[V(i + j * spheres.size())].head<3>() =
                         v_scene->state.x[v_ids[j][i]];
                     vpoint[V(i + j * spheres.size())][3] =
@@ -833,7 +860,9 @@ class OctopusComponent : public Component {
                 }
             }
 
+            // TODO - what is this whole new smesh thing?
             SphereMesh new_smesh;
+            // add spheres at smesh vertices
             for (auto vert : smesh.vertices()) {
                 auto v = new_smesh.add_vertex(vpoint[vert]);
                 new_smesh.add_sphere(v);
@@ -841,6 +870,7 @@ class OctopusComponent : public Component {
 
             sphere_renderer->upload_mesh(new_smesh);
 
+            // what is this changing?
             for (auto vert : smesh.vertices()) {
                 vpoint[vert][3] *= 1.02;
             }
@@ -848,12 +878,14 @@ class OctopusComponent : public Component {
             tsphere_renderer->upload_mesh(smesh);
         }
 
+        // render_comp - WorldRendererComponent
         if (render_comp->visible) {
 
             auto transforms = get_transforms();
             renderer->upload_transforms(transforms);
         }
 
+        // if cannonball render component
         if (cannonball_render_comp->visible) {
             auto cannonball_vpoint =
                 cannonball_smesh.get_vertex_property<Vec4>("v:point");
@@ -885,6 +917,7 @@ class OctopusComponent : public Component {
         }
     }
 
+   // TODO - does this move around the octopus manually?
     void set_position(int i, Vec3 pos, Vec3 v) {
         for (auto id : v_ids[i]) {
             v_scene->state.x[id] = v_scene->state.xi[id] + pos;
@@ -904,17 +937,22 @@ class OctopusComponent : public Component {
         }
     }
 
+    // get_transforms, as called above
     std::vector<std::vector<Mat4x4>> get_transforms() const {
 
+        // make transforms for each cow
         std::vector<std::vector<Mat4x4>> transforms(n_cows);
 
+        // for each cow
         for (int j = 0; j < n_cows; ++j) {
+            // for each control pill
             for (int i = 0; i < control_pills.size(); ++i) {
                 int k = p_ids[j][control_pills[i]];
 
                 int v0 = v_ids[j][all_pills[control_pills[i]][0]];
                 int v1 = v_ids[j][all_pills[control_pills[i]][1]];
 
+                // translation, rotation, scale
                 Transform t0;
                 t0.set_translation(v_scene->state.x[v0]);
                 t0.apply_rotation(v_scene->state.q[k]);
