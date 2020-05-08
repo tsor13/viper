@@ -369,56 +369,99 @@ class OctopusComponent : public Component {
         // read in SurfaceMesh for octopus
         {
             SurfaceMesh tempmesh;
-            // read in from mesh.bin
-            std::ifstream istream("mesh.bin", std::ios::binary);
+            bool tentacle = true;
+            if (tentacle){
+                tempmesh.read("Tentacle_convert.obj");
+                auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
 
-            // 24842 Vec3 point vectors
-            std::vector<Vec3> pointvec(24842);
-            istream.read(reinterpret_cast<char*>(&pointvec[0]), 24842 * sizeof(Vec3));
-            
-            // 24842 Vec3 normal vectors
-            std::vector<Vec3> normalvec(24842);
-            istream.read(reinterpret_cast<char*>(&normalvec[0]), 24842 * sizeof(Vec3));
-            
-            // 24842 Vec2 texture vectors
-            std::vector<Vec2> texvec(24842);
-            istream.read(reinterpret_cast<char*>(&texvec[0]), 24842 * sizeof(Vec2));
-            
-            // 24842 int p indices
-            std::vector<int> pidxvec(24842);
-            istream.read(reinterpret_cast<char*>(&pidxvec[0]), 24842 * sizeof(int));
-            
-            // 12312 triangle faces
-            std::vector<int> trivec(12312 * 3);
-            istream.read(reinterpret_cast<char*>(&trivec[0]), 12312 * 3 * sizeof(int));
+                unsigned i = 0;
+                // for each vertex, add vertex properties to tempmesh
+                for (auto vert : tempmesh.vertices()){
+                    vpindex[vert] = i;
+                    i++;
+                }
 
-            // for each point, add vertex to tempmesh
-            for (int i = 0; i < 24842; ++i) {
-                auto vert = tempmesh.add_vertex(pointvec[i]);
+                // for (auto vert : temp2.vertices()) {
+                //     auto v = tempmesh.add_vertex(points[vert]);
+                // }
+
+                // // Vertex Properties
+                // // Vec2 texture coordinates
+                // auto vtexcoord = tempmesh.add_vertex_property<Vec2>("v:texcoord");
+                // // Vec3 normal vectors
+                // auto vnormal = tempmesh.add_vertex_property<Vec3>("v:normal");
+                // // int p index
+                // auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
+
+                // unsigned i = 0;
+                // // for each vertex, add vertex properties to tempmesh
+                // for (auto vert : tempmesh.vertices()){
+                //     vnormal[vert] = normals[vert];
+                //     // vtexcoord[vert] = ??
+                //     vpindex[vert] = i;
+                //     i++;
+                // }
+                // for (auto face : temp2.faces()){
+                //     tempmesh.add_face(face);
+                // }
+                // // for each face, add to tempmesh
+                // for (int i = 0; i < 12312; ++i) {
+                //     tempmesh.add_triangle(SurfaceMesh::Vertex(trivec[3*i]),
+                //                     SurfaceMesh::Vertex(trivec[3*i + 1]),
+                //                     SurfaceMesh::Vertex(trivec[3*i + 2]));
+                // }
+            } else {
+                // read in from mesh.bin
+                std::ifstream istream("mesh.bin", std::ios::binary);
+
+                // 24842 Vec3 point vectors
+                std::vector<Vec3> pointvec(24842);
+                istream.read(reinterpret_cast<char*>(&pointvec[0]), 24842 * sizeof(Vec3));
+                
+                // 24842 Vec3 normal vectors
+                std::vector<Vec3> normalvec(24842);
+                istream.read(reinterpret_cast<char*>(&normalvec[0]), 24842 * sizeof(Vec3));
+                
+                // 24842 Vec2 texture vectors
+                std::vector<Vec2> texvec(24842);
+                istream.read(reinterpret_cast<char*>(&texvec[0]), 24842 * sizeof(Vec2));
+                
+                // 24842 int p indices
+                std::vector<int> pidxvec(24842);
+                istream.read(reinterpret_cast<char*>(&pidxvec[0]), 24842 * sizeof(int));
+                
+                // 12312 triangle faces
+                std::vector<int> trivec(12312 * 3);
+                istream.read(reinterpret_cast<char*>(&trivec[0]), 12312 * 3 * sizeof(int));
+
+                // for each point, add vertex to tempmesh
+                for (int i = 0; i < 24842; ++i) {
+                    auto vert = tempmesh.add_vertex(pointvec[i]);
+                }
+
+                // Vertex Properties
+                // Vec2 texture coordinates
+                auto vtexcoord = tempmesh.add_vertex_property<Vec2>("v:texcoord");
+                // Vec3 normal vectors
+                auto vnormal = tempmesh.add_vertex_property<Vec3>("v:normal");
+                // int p index
+                auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
+
+                // for each vertex, add vertex properties to tempmesh
+                for (int i = 0; i < 24842; ++i) {
+                    SurfaceMesh::Vertex vert(i);
+                    vnormal[vert] = normalvec[i];
+                    vtexcoord[vert] = texvec[i];
+                    vpindex[vert] = pidxvec[i];
+                }
+                // for each face, add to tempmesh
+                for (int i = 0; i < 12312; ++i) {
+                    tempmesh.add_triangle(SurfaceMesh::Vertex(trivec[3*i]),
+                                    SurfaceMesh::Vertex(trivec[3*i + 1]),
+                                    SurfaceMesh::Vertex(trivec[3*i + 2]));
+                }
+
             }
-
-            // Vertex Properties
-            // Vec2 texture coordinates
-            auto vtexcoord = tempmesh.add_vertex_property<Vec2>("v:texcoord");
-            // Vec3 normal vectors
-            auto vnormal = tempmesh.add_vertex_property<Vec3>("v:normal");
-            // int p index
-            auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
-
-            // for each vertex, add vertex properties to tempmesh
-            for (int i = 0; i < 24842; ++i) {
-                SurfaceMesh::Vertex vert(i);
-                vnormal[vert] = normalvec[i];
-                vtexcoord[vert] = texvec[i];
-                vpindex[vert] = pidxvec[i];
-            }
-            // for each face, add to tempmesh
-            for (int i = 0; i < 12312; ++i) {
-                tempmesh.add_triangle(SurfaceMesh::Vertex(trivec[3*i]),
-                                SurfaceMesh::Vertex(trivec[3*i + 1]),
-                                SurfaceMesh::Vertex(trivec[3*i + 2]));
-            }
-
             // set mesh to tempmesh
             mesh = tempmesh;
         }
@@ -528,6 +571,7 @@ class OctopusComponent : public Component {
 
         // parse the json
         {
+            std::cout << "Begin json" << std::endl;
             rapidjson::Document j;
             j.Parse(output.c_str());
 
@@ -572,8 +616,11 @@ class OctopusComponent : public Component {
                 // set bone ids to corresponding bone_ids
                 bone_ids_prop[vert] = bones[ind_verts[vpindex[vert]]];
             }
+            std::cout << "End json" << std::endl;
         }
 
+
+        std::cout << "Start body" << std::endl;
         // allocate memory?
         v_ids.resize(n_cows);
         p_ids.resize(n_cows);
@@ -685,10 +732,13 @@ class OctopusComponent : public Component {
 
         // TODO - where does get transforms come from?
         init_transforms = get_transforms();
+        std::cout << "Reached mid1" << std::endl;
         renderer->upload_mesh(mesh, get_transforms());
         // TODO - commenting out doesn't seem to affect?
-        renderer->get_gpu_mesh().set_vtexcoord(
-            mesh.get_vertex_property<Vec2>("v:texcoord").vector());
+        std::cout << "Reached mid2" << std::endl;
+        // renderer->get_gpu_mesh().set_vtexcoord(
+        //     mesh.get_vertex_property<Vec2>("v:texcoord").vector());
+        std::cout << "Reached mid3" << std::endl;
 
         // defined below
         reset();
