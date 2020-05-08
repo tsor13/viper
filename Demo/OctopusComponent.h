@@ -12,8 +12,10 @@
 
 #pragma once
 
+// include standard libraries
 #include <cfloat>
 
+// Load OpenGP
 #include <OpenGP/GL/Components/TrackballComponent.h>
 #include <OpenGP/GL/Components/WorldRenderComponent.h>
 #include <OpenGP/GL/Scene.h>
@@ -22,19 +24,23 @@
 
 #include "tiny_obj_loader.h"
 
+// Load Demo/Viper files
 #include "Octopus.h"
 #include "Scene.h"
 #include "Subprocess.h"
 #include "Viper_json.h"
 
+// I'm assuming for drawing pills?
 #define VIPER_TEXTURE 0
 #define VIPER_GREY 1
 #define VIPER_GOLD 2
 #define VIPER_CLEAR_RED 3
 
+// make new namespace
 namespace OpenGP {
-
+// OctopusData data structure
 struct OctopusData {
+    // TODO - what are these constraints? Are they resting states?
     std::vector<int> radius_constraints;
     std::vector<int> volume_constraints;
     std::vector<int> stretch_constraints;
@@ -42,6 +48,7 @@ struct OctopusData {
     std::vector<int> bend_constraints;
     std::vector<int> cannonball_constraints;
 
+    // set whether each constraint is enabled in scene
     void set_enabled(bool enabled, viper::Scene &scene) {
         for (auto i : radius_constraints)
             scene.constraints.radius[i].enabled = enabled;
@@ -55,23 +62,34 @@ struct OctopusData {
             scene.constraints.bend[i].enabled = enabled;
     }
 
+    // TODO - whaht is cannonball?
+    // set whether cannonball enabled in scene
     void set_cannonball_enabled(bool enabled, viper::Scene &scene) {
         for (auto i : cannonball_constraints)
             scene.constraints.distance[i].enabled = enabled;
     }
 };
 
+// TODO - where does Component come from? OpenGP?
+// OctopusComponent class
 class OctopusComponent : public Component {
   public:
+  // scene where present
     static viper::Scene *v_scene;
 
+    // TODO - test this
+    // num of octopi to simulate?
     const int n_cows = 90;
     int n_active = 90;
 
+    // what is this?
     int scene_index = 0;
 
+    // TODO - test
+    // what is active cannonball?
     bool cannonballs_active = false;
 
+    // renderers
     WorldRenderComponent *render_comp;
     SurfaceMeshRenderer *renderer;
     WorldRenderComponent *sphere_render_comp;
@@ -83,28 +101,39 @@ class OctopusComponent : public Component {
     WorldRenderComponent *pillar_render_comp;
     SphereMeshRenderer *pillar_renderer;
 
+    // ids
     std::vector<std::vector<int>> v_ids, p_ids;
     std::vector<int> cannonball_ids;
     std::vector<int> pillar_ids;
+    // vector of OctopusData struct
     std::vector<OctopusData> cow_data;
 
+    // high def surface mesh
     SurfaceMesh mesh;
+    // smesh keeps track of viper primitives, idk cannonball_smesh
     OpenGP::SphereMesh smesh, cannonball_smesh;
 
+    // spheres and pills
     std::vector<Vec4> spheres;
     std::vector<Vec2i> all_pills;
+    // TODO - what is a control pill?
     std::vector<int> control_pills;
     std::vector<float> compliances;
     std::vector<float> masses;
 
+    // I believe for moving the camera around
     std::vector<std::vector<Mat4x4>> init_transforms;
 
+    // since we're using Vertex a lot, I assum
     using V = OpenGP::SphereMesh::Vertex;
 
+    // initialize
     void init() {
         render_comp = &(require<WorldRenderComponent>());
         renderer = &(render_comp->set_renderer<SurfaceMeshRenderer>());
 
+        // define Octomat material
+        // TODO - important?
         Material octomat(R"GLSL(
 
             flat out int gid;
@@ -264,6 +293,7 @@ class OctopusComponent : public Component {
             }
 
         )GLSL");
+        // set properties (defined above?)
         octomat.set_property("material", VIPER_TEXTURE);
         octomat.set_property("diffuse", 5);
         octomat.set_property("ao_map", 6);
@@ -273,6 +303,7 @@ class OctopusComponent : public Component {
         renderer->rebuild();
         render_comp->visible = true;
 
+        // have spheres render to above specifications
         sphere_render_comp =
             &(get_scene().create_entity_with<WorldRenderComponent>());
         sphere_renderer =
@@ -283,6 +314,7 @@ class OctopusComponent : public Component {
         sphere_renderer->rebuild();
         sphere_render_comp->visible = false;
 
+        // have pills render to above specs
         tsphere_render_comp =
             &(get_scene().create_entity_with<WorldRenderComponent>());
         tsphere_renderer =
@@ -295,6 +327,7 @@ class OctopusComponent : public Component {
         tsphere_renderer->rebuild();
         tsphere_render_comp->visible = false;
 
+        // render cannonbals? grey?
         cannonball_render_comp =
             &(get_scene().create_entity_with<WorldRenderComponent>());
         cannonball_renderer =
@@ -305,6 +338,7 @@ class OctopusComponent : public Component {
                                                          VIPER_GREY);
         cannonball_renderer->rebuild();
 
+        // render pillars
         pillar_render_comp =
             &(get_scene().create_entity_with<WorldRenderComponent>());
         pillar_renderer =
@@ -314,6 +348,7 @@ class OctopusComponent : public Component {
         pillar_renderer->get_material().set_property("material", VIPER_GREY);
         pillar_renderer->rebuild();
 
+        // to make pillars I believe?
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 5; ++j) {
 
@@ -331,105 +366,145 @@ class OctopusComponent : public Component {
             }
         }
 
+        // read in SurfaceMesh for octopus
         {
             SurfaceMesh tempmesh;
+            // read in from mesh.bin
             std::ifstream istream("mesh.bin", std::ios::binary);
 
+            // 24842 Vec3 point vectors
             std::vector<Vec3> pointvec(24842);
             istream.read(reinterpret_cast<char*>(&pointvec[0]), 24842 * sizeof(Vec3));
             
+            // 24842 Vec3 normal vectors
             std::vector<Vec3> normalvec(24842);
             istream.read(reinterpret_cast<char*>(&normalvec[0]), 24842 * sizeof(Vec3));
             
+            // 24842 Vec2 texture vectors
             std::vector<Vec2> texvec(24842);
             istream.read(reinterpret_cast<char*>(&texvec[0]), 24842 * sizeof(Vec2));
             
+            // 24842 int p indices
             std::vector<int> pidxvec(24842);
             istream.read(reinterpret_cast<char*>(&pidxvec[0]), 24842 * sizeof(int));
             
+            // 12312 triangle faces
             std::vector<int> trivec(12312 * 3);
             istream.read(reinterpret_cast<char*>(&trivec[0]), 12312 * 3 * sizeof(int));
 
+            // for each point, add vertex to tempmesh
             for (int i = 0; i < 24842; ++i) {
                 auto vert = tempmesh.add_vertex(pointvec[i]);
             }
 
+            // Vertex Properties
+            // Vec2 texture coordinates
             auto vtexcoord = tempmesh.add_vertex_property<Vec2>("v:texcoord");
+            // Vec3 normal vectors
             auto vnormal = tempmesh.add_vertex_property<Vec3>("v:normal");
+            // int p index
             auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
 
+            // for each vertex, add vertex properties to tempmesh
             for (int i = 0; i < 24842; ++i) {
                 SurfaceMesh::Vertex vert(i);
                 vnormal[vert] = normalvec[i];
                 vtexcoord[vert] = texvec[i];
                 vpindex[vert] = pidxvec[i];
             }
+            // for each face, add to tempmesh
             for (int i = 0; i < 12312; ++i) {
                 tempmesh.add_triangle(SurfaceMesh::Vertex(trivec[3*i]),
                                 SurfaceMesh::Vertex(trivec[3*i + 1]),
                                 SurfaceMesh::Vertex(trivec[3*i + 2]));
             }
 
+            // set mesh to tempmesh
             mesh = tempmesh;
         }
 
+        // make an octopus from VIPER primitives
+        // TODO - where is this saved? where does the data come from?
         cow::get_octopus(spheres, all_pills, control_pills, masses,
                          compliances);
 
+        // for each sphere, add vertex to smesh
         for (int i = 0; i < spheres.size(); ++i) {
             auto &v = spheres[i];
             smesh.add_vertex(v);
         }
 
+        // for each control pill, add edge to smesh
         for (int i : control_pills) {
             auto pill = all_pills[i];
             smesh.add_edge(V(pill[0]), V(pill[1]));
         }
 
+        // output string
         std::string output;
 
+        // get vertex p indices from mesh
         auto vpindex = mesh.get_vertex_property<int>("v:pindex");
+        // int to int map
+        // maps p indices to 0, 1, 2, ...
         std::map<int, int> ind_verts;
         {
+            //
             // build watertight mesh
+            //
+            // store positions of vertices
             std::vector<Vec3> verts;
+            // for each vertex in mesh
             for (auto vert : mesh.vertices()) {
+                // int = vector p index from mesh
                 int ind = vpindex[vert];
+                // if not in ind_verts?
                 if (ind_verts.find(ind) == ind_verts.end()) {
+                    // counts up 0, 1, ...
                     ind_verts[ind] = verts.size();
+                    // store position of vertex
                     verts.push_back(mesh.position(vert));
                 }
             }
 
+            // surface mesh faces
             std::vector<Vec3i> tris;
+            // for each face in mesh
             for (auto face : mesh.faces()) {
                 Vec3i tri;
                 int i = 0;
+                //for each vertex in face
                 for (auto vert : mesh.vertices(face))
+                    // next entry in tri is vertex index (0, 1, ...)
                     tri[i++] = ind_verts[vpindex[vert]];
+                // save face in tris
                 tris.push_back(tri);
             }
-
+            //
             // compute weights
-
+            //
             rapidjson::MemoryPoolAllocator<> alloc;
             rapidjson::Document j(&alloc);
             j.SetObject();
             rapidjson::Document::AllocatorType &allocator = j.GetAllocator();
 
+            // send surface mesh vertices
             j.AddMember("vertices", viper::to_json(verts, allocator),
                         allocator);
+            // send surface mesh triangles
             j.AddMember("triangles", viper::to_json(tris, allocator),
                         allocator);
 
             rapidjson::Value spheres_array(rapidjson::kArrayType);
             rapidjson::Value pills_array(rapidjson::kArrayType);
 
+            // send VIPER spheres
             j.AddMember("spheres",
                         viper::to_json(
                             smesh.get_vertex_property<Vec4>("v:point").vector(),
                             allocator),
                         allocator);
+            // send VIPER pills
             j.AddMember(
                 "pills",
                 viper::to_json(
@@ -437,82 +512,114 @@ class OctopusComponent : public Component {
                     allocator),
                 allocator);
 
+            // json accept output
             rapidjson::StringBuffer strbuf;
             strbuf.Clear();
             rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
             j.Accept(writer);
 
+            // run Sphereweights, which calculates weights to mesh I'm assuming
+            // TODO - I think it's been exiting 0? Don't we want 1?
             int proc_return =
                 viper::run_process("sphereweights", strbuf.GetString(), output);
             std::cout << "Sphereweights exited with code: " << proc_return
                       << std::endl;
         }
 
+        // parse the json
         {
             rapidjson::Document j;
             j.Parse(output.c_str());
 
+            // read in weights (floats matrix)
             auto all_weights =
                 viper::from_json<std::vector<std::vector<float>>>(j["weights"]);
+                // read in bone ids (ints)
             auto all_bones =
                 viper::from_json<std::vector<std::vector<int>>>(j["bone_ids"]);
 
             std::vector<Vec4> weights(all_weights.size());
             std::vector<Vec4i> bones(all_bones.size());
 
+            // iterate thruogh weights
             for (int i = 0; i < weights.size(); ++i) {
+                // make room in allweights for 4
                 while (all_weights[i].size() < 4) {
                     all_weights[i].push_back(0.f);
                     all_bones[i].push_back(0);
                 }
+                // assign to weights
                 weights[i] = Vec4(all_weights[i][0], all_weights[i][1],
                                   all_weights[i][2], all_weights[i][3]);
+                // normalize
                 float sum = weights[i].sum();
                 weights[i] /= sum;
+                // set bone ids
                 bones[i] = Vec4i(all_bones[i][0], all_bones[i][1],
                                  all_bones[i][2], all_bones[i][3]);
             }
 
+            // add vertex properties
+            // skin weight Vec4
             auto weights_prop = mesh.add_vertex_property<Vec4>("v:skinweight");
+            // bone ids Vec4i
             auto bone_ids_prop = mesh.add_vertex_property<Vec4i>("v:boneid");
 
+            // for each vertex in mesh
             for (auto vert : mesh.vertices()) {
+                // set mesh weights to corresponding weights
                 weights_prop[vert] = weights[ind_verts[vpindex[vert]]];
+                // set bone ids to corresponding bone_ids
                 bone_ids_prop[vert] = bones[ind_verts[vpindex[vert]]];
             }
         }
 
+        // allocate memory?
         v_ids.resize(n_cows);
         p_ids.resize(n_cows);
         cannonball_ids.resize(n_cows);
 
+        // for 0, 1, ..., n_cows
         for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
 
+            // make octopus data
             OctopusData data;
 
+            // idk? cannonball vector?
             Vec4 cannonball_s(0, 0, -1.5, 0.7);
 
+            // TODO - what are all the paramaters?
+            // add new particle
             cannonball_ids[cow_id] = v_scene->addParticle(
                 cannonball_s.head<3>(), cannonball_s[3], 0.05);
+            // idk?
             v_scene->pInfo[cannonball_ids[cow_id]].group = 1 + cow_id * 2;
+            // is this same pill as viper pill?
             v_scene->addPill(cannonball_ids[cow_id], cannonball_ids[cow_id]);
+            // add (0, 0, -1.5, 0.7) to cannonball_smesh
             cannonball_smesh.add_sphere(
                 cannonball_smesh.add_vertex(cannonball_s));
 
+            // for each sphere
             for (int i = 0; i < spheres.size(); ++i) {
                 auto &v = spheres[i];
+                // w is inverse mass of sphere
                 float w = 1.0 / masses[i];
                 v_ids[cow_id].push_back(
                     v_scene->addParticle(v.head<3>(), v[3], w));
                 v_scene->pInfo[v_ids[cow_id].back()].group = cow_id * 2;
 
+                // add radius constraints to OctopusData data
                 data.radius_constraints.push_back(
                     v_scene->constraints.radius.size());
+                // save radius size constraints to v_scene?
                 v_scene->constraints.radius.push_back(
                     viper::C_radius(v_ids[cow_id].back(), v[3], 1e-3));
 
+                // TODO - why?
+                // if i in 10, ..., 17
                 if (i >= 10 && i < 18) {
-
+                    // ???
                     data.cannonball_constraints.push_back(
                         v_scene->constraints.distance.size());
                     v_scene->constraints.distance.push_back(viper::C_distance(
@@ -521,10 +628,13 @@ class OctopusComponent : public Component {
                 }
             }
 
+            // for each pill
             for (int i = 0; i < all_pills.size(); i++) {
                 auto pill = all_pills[i];
+                // add pill to v_sceen
                 int p_id = v_scene->addPill(v_ids[cow_id][pill[0]],
                                             v_ids[cow_id][pill[1]]);
+                // save pill id of v_scene
                 p_ids[cow_id].push_back(p_id);
 
                 // TODO - change this to activate muscle. Not sure where to change this dynamically though?
@@ -533,19 +643,26 @@ class OctopusComponent : public Component {
                 // stretch out
                 // d *= 2;
 
+                // save volume constraints
                 data.volume_constraints.push_back(
                     v_scene->constraints.volume.size());
                 v_scene->constraints.volume.push_back(
                     viper::C_volume(v_ids[cow_id][pill[0]],
                                     v_ids[cow_id][pill[1]], v_scene->state));
+                // what does this compliance refer to? I thought we'd already defined it?
                 float compliance = 1e-4;
                 data.stretch_constraints.push_back(
                     v_scene->constraints.stretch.size());
+                // to change dynamically, I think we're going to need to somehow save
+                // the references to the ones we care about in v_scene.constraints.stretch
                 v_scene->constraints.stretch.push_back(viper::C_stretch(
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));
             }
+            // compares every two possibilities of pills
+            // for each pill index i in 0, 1, ..., all_pills.size()
             for (int i = 0; i < all_pills.size(); ++i) {
+                // for each pill index j in i+1, i+2, ..., all_pills.size()
                 for (int j = i + 1; j < all_pills.size(); ++j) {
                     auto pill_i = all_pills[i];
                     auto pill_j = all_pills[j];
@@ -562,6 +679,7 @@ class OctopusComponent : public Component {
                 }
             }
 
+            // push back onto vector of OctopusData
             cow_data.push_back(data);
         }
 
