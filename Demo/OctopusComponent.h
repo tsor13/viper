@@ -369,9 +369,10 @@ class OctopusComponent : public Component {
         // read in SurfaceMesh for octopus
         {
             SurfaceMesh tempmesh;
-            bool tentacle = true;
+            bool tentacle = false;
             if (tentacle){
-                tempmesh.read("Tentacle_convert.obj");
+                bool success = tempmesh.read("Tentacle_convert.obj");
+                std::cout << "Read tentacle exited with code: " << success << std::endl;
                 auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
 
                 unsigned i = 0;
@@ -571,7 +572,6 @@ class OctopusComponent : public Component {
 
         // parse the json
         {
-            std::cout << "Begin json" << std::endl;
             rapidjson::Document j;
             j.Parse(output.c_str());
 
@@ -616,11 +616,9 @@ class OctopusComponent : public Component {
                 // set bone ids to corresponding bone_ids
                 bone_ids_prop[vert] = bones[ind_verts[vpindex[vert]]];
             }
-            std::cout << "End json" << std::endl;
         }
 
 
-        std::cout << "Start body" << std::endl;
         // allocate memory?
         v_ids.resize(n_cows);
         p_ids.resize(n_cows);
@@ -689,6 +687,15 @@ class OctopusComponent : public Component {
                 float d = (spheres[pill[0]] - spheres[pill[1]]).norm();
                 // stretch out
                 // d *= 2;
+                // if (i%3 == 0) {
+                //     d *= 1;
+                // } else {
+                //     d *= .6;
+                // }
+
+                // if (i%3 == 1) {
+                //     d *= 1.5;
+                // }
 
                 // save volume constraints
                 data.volume_constraints.push_back(
@@ -736,8 +743,9 @@ class OctopusComponent : public Component {
         renderer->upload_mesh(mesh, get_transforms());
         // TODO - commenting out doesn't seem to affect?
         std::cout << "Reached mid2" << std::endl;
-        // renderer->get_gpu_mesh().set_vtexcoord(
-        //     mesh.get_vertex_property<Vec2>("v:texcoord").vector());
+        // gpu_mesh of type GPUMesh
+        renderer->get_gpu_mesh().set_vtexcoord(
+            mesh.get_vertex_property<Vec2>("v:texcoord").vector());
         std::cout << "Reached mid3" << std::endl;
 
         // defined below
