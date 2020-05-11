@@ -398,8 +398,11 @@ int main(int argc, char **argv) {
     // TODO - camera position? Could be important
     // CHANGE
     c_entity.get<CameraComponent>().set_window(window);
-    c_entity.center = Vec3(0, 1, 0);
+    // c_entity.center = Vec3(0, 1, 0);
+    // c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
+    c_entity.center = Vec3(-10, 1, 0);
     c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
+
 
     // TODO - what is this
     auto &bsphere_entity = scene.create_entity_with<WorldRenderComponent>();
