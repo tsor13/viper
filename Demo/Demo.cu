@@ -25,6 +25,8 @@
 #include <OpenGP/GL/ImguiRenderer.h>
 #include <OpenGP/Image/Image.h>
 
+// DevIL (for reading texture)
+
 // include Octopus
 // CHANGE
 #include "OctopusComponent.h"
@@ -264,8 +266,11 @@ int main(int argc, char **argv) {
     // Read in texture binary
     // TODO - what is it doing here?
     // CHANGE?
+    // std::ifstream("Tentacle_diffuse.png", std::ios::binary).read(
+    //     reinterpret_cast<char*>(&colmap_cpu(0, 0)), 12582912);
     std::ifstream("texture.bin", std::ios::binary).read(
         reinterpret_cast<char*>(&colmap_cpu(0, 0)), 12582912);
+    // Image<Eigen::Matrix<uint8_t, 3, 1>>::imread_png("Tentacle_diffuse.png", Image<Eigen::Matrix<uint8_t, 3, 1>>&);
     colmap.upload(colmap_cpu);
 
     FullscreenQuad fsquad;
@@ -447,8 +452,8 @@ int main(int argc, char **argv) {
     // defaults for settings and physics
     auto set_defaults = [&]() {
         // TODO - change this to show pills??
-        show_pills = false;
-        // show_pills = true;
+        // show_pills = false;
+        show_pills = true;
         octoswarm.render_comp->visible = !show_pills;
         octoswarm.sphere_render_comp->visible = show_pills;
         it_count = 10;
