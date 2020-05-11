@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     // make light
     auto &light_entity = scene.create_entity_with<CameraComponent>();
     light_entity.get<TransformComponent>().set_forward(
-        Vec3(-1, -2, 0).normalized());
+            Vec3(-1, -2, 0).normalized());
     light_entity.get<TransformComponent>().position = Vec3(50, 100, 0);
 
     Mat4x4 shadow_matrix =
@@ -65,10 +65,10 @@ int main(int argc, char **argv) {
     auto &floor_entity = scene.create_entity_with<WorldRenderComponent>();
     auto &floor_renderer = floor_entity.set_renderer<SurfaceMeshRenderer>();
     floor_renderer.get_gpu_mesh().set_vpoint(
-        {Vec3(-10000, 0, -10000), Vec3(10000, 0, -10000),
-         Vec3(-10000, 0, 10000), Vec3(10000, 0, 10000)});
+            {Vec3(-10000, 0, -10000), Vec3(10000, 0, -10000),
+            Vec3(-10000, 0, 10000), Vec3(10000, 0, 10000)});
     floor_renderer.get_gpu_mesh().set_vnormal(
-        {Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0)});
+            {Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0), Vec3(0, 1, 0)});
     floor_renderer.get_gpu_mesh().set_triangles({0, 1, 2, 1, 2, 3});
 
     // define floormat material
@@ -143,221 +143,221 @@ int main(int argc, char **argv) {
             vec3 lightdir = normalize(light_pos - pos);
 
             vec3 white_color = vec3(1, 1, 1);
-            vec3 black_color = vec3(0.6, 0.6, 0.6);
+    vec3 black_color = vec3(0.6, 0.6, 0.6);
 
-            vec3 background = (white_color + black_color) / 2;
+    vec3 background = (white_color + black_color) / 2;
 
-            vec3 diffuse_color = white_color;
+    vec3 diffuse_color = white_color;
 
-            vec3 modpos = mod(pos / 5, 1);
+    vec3 modpos = mod(pos / 5, 1);
 
-            if ((modpos.x < 0.5) ^^ (modpos.z < 0.5)) {
-                diffuse_color = black_color;
-            }
+    if ((modpos.x < 0.5) ^^ (modpos.z < 0.5)) {
+        diffuse_color = black_color;
+    }
 
-            float blur = exp(-2 * max(length(dFdx(pos)), length(dFdy(pos))));
-            blur = clamp(2 * blur, 0, 1);
+    float blur = exp(-2 * max(length(dFdx(pos)), length(dFdy(pos))));
+    blur = clamp(2 * blur, 0, 1);
 
-            diffuse_color = mix(background, diffuse_color, blur);
+    diffuse_color = mix(background, diffuse_color, blur);
 
-            vec3 ambient = get_ambient(pos);
+    vec3 ambient = get_ambient(pos);
 
-            float shadow = get_shadow(pos);
+    float shadow = get_shadow(pos);
 
-            vec3 out_color = shadow * 0.85 * clamp(dot(get_normal(), normalize(lightdir)), 0, 1) * diffuse_color;
+    vec3 out_color = shadow * 0.85 * clamp(dot(get_normal(), normalize(lightdir)), 0, 1) * diffuse_color;
 
-            out_color += ambient * diffuse_color;
+    out_color += ambient * diffuse_color;
 
-            return vec4(out_color, 1);
-        }
+    return vec4(out_color, 1);
+}
 
-    )GLSL");
-    floormat.set_property("ao_map", 6);
-    floormat.set_property("shadow_map", 7);
-    floormat.set_property("shadow_matrix", shadow_matrix);
-    floormat.set_property("light_pos",
-                          light_entity.get<TransformComponent>().position);
-    floormat.set_property("shadow_near", light_entity.near_plane);
-    floormat.set_property("shadow_far", light_entity.far_plane);
-    floor_renderer.set_material(floormat);
-    floor_renderer.rebuild();
+)GLSL");
+floormat.set_property("ao_map", 6);
+floormat.set_property("shadow_map", 7);
+floormat.set_property("shadow_matrix", shadow_matrix);
+floormat.set_property("light_pos",
+        light_entity.get<TransformComponent>().position);
+floormat.set_property("shadow_near", light_entity.near_plane);
+floormat.set_property("shadow_far", light_entity.far_plane);
+floor_renderer.set_material(floormat);
+floor_renderer.rebuild();
 
-    // make viper scene
-    viper::Scene sim_scene;
+// make viper scene
+viper::Scene sim_scene;
 
-    // Set OctopusComponent property to current scene
-    OctopusComponent::v_scene = &sim_scene;
-    // TODO - what is octoswarm??
-    // CHANGE
-    auto &octoswarm = scene.create_entity_with<OctopusComponent>();
+// Set OctopusComponent property to current scene
+OctopusComponent::v_scene = &sim_scene;
+// TODO - what is octoswarm??
+// CHANGE
+auto &octoswarm = scene.create_entity_with<OctopusComponent>();
 
-    octoswarm.renderer->get_material().set_property("shadow_matrix",
-                                                    shadow_matrix);
-    octoswarm.renderer->get_material().set_property(
+octoswarm.renderer->get_material().set_property("shadow_matrix",
+        shadow_matrix);
+octoswarm.renderer->get_material().set_property(
         "light_pos", light_entity.get<TransformComponent>().position);
-    octoswarm.renderer->get_material().set_property("shadow_near",
-                                                    light_entity.near_plane);
-    octoswarm.renderer->get_material().set_property("shadow_far",
-                                                    light_entity.far_plane);
-    octoswarm.sphere_renderer->get_material().set_property("shadow_matrix",
-                                                           shadow_matrix);
-    octoswarm.sphere_renderer->get_material().set_property(
+octoswarm.renderer->get_material().set_property("shadow_near",
+        light_entity.near_plane);
+octoswarm.renderer->get_material().set_property("shadow_far",
+        light_entity.far_plane);
+octoswarm.sphere_renderer->get_material().set_property("shadow_matrix",
+        shadow_matrix);
+octoswarm.sphere_renderer->get_material().set_property(
         "light_pos", light_entity.get<TransformComponent>().position);
-    octoswarm.sphere_renderer->get_material().set_property(
+octoswarm.sphere_renderer->get_material().set_property(
         "shadow_near", light_entity.near_plane);
-    octoswarm.sphere_renderer->get_material().set_property(
+octoswarm.sphere_renderer->get_material().set_property(
         "shadow_far", light_entity.far_plane);
-    octoswarm.tsphere_renderer->get_material().set_property("shadow_matrix",
-                                                            shadow_matrix);
-    octoswarm.tsphere_renderer->get_material().set_property(
+octoswarm.tsphere_renderer->get_material().set_property("shadow_matrix",
+        shadow_matrix);
+octoswarm.tsphere_renderer->get_material().set_property(
         "light_pos", light_entity.get<TransformComponent>().position);
-    octoswarm.tsphere_renderer->get_material().set_property(
+octoswarm.tsphere_renderer->get_material().set_property(
         "shadow_near", light_entity.near_plane);
-    octoswarm.tsphere_renderer->get_material().set_property(
+octoswarm.tsphere_renderer->get_material().set_property(
         "shadow_far", light_entity.far_plane);
-    octoswarm.cannonball_renderer->get_material().set_property("shadow_matrix",
-                                                               shadow_matrix);
-    octoswarm.cannonball_renderer->get_material().set_property(
+octoswarm.cannonball_renderer->get_material().set_property("shadow_matrix",
+        shadow_matrix);
+octoswarm.cannonball_renderer->get_material().set_property(
         "light_pos", light_entity.get<TransformComponent>().position);
-    octoswarm.cannonball_renderer->get_material().set_property(
+octoswarm.cannonball_renderer->get_material().set_property(
         "shadow_near", light_entity.near_plane);
-    octoswarm.cannonball_renderer->get_material().set_property(
+octoswarm.cannonball_renderer->get_material().set_property(
         "shadow_far", light_entity.far_plane);
-    octoswarm.pillar_renderer->get_material().set_property("shadow_matrix",
-                                                           shadow_matrix);
-    octoswarm.pillar_renderer->get_material().set_property(
+octoswarm.pillar_renderer->get_material().set_property("shadow_matrix",
+        shadow_matrix);
+octoswarm.pillar_renderer->get_material().set_property(
         "light_pos", light_entity.get<TransformComponent>().position);
-    octoswarm.pillar_renderer->get_material().set_property(
+octoswarm.pillar_renderer->get_material().set_property(
         "shadow_near", light_entity.near_plane);
-    octoswarm.pillar_renderer->get_material().set_property(
+octoswarm.pillar_renderer->get_material().set_property(
         "shadow_far", light_entity.far_plane);
 
-    auto &c_entity = scene.create_entity_with<TrackballComponent>();
-    c_entity.oriented = true;
+auto &c_entity = scene.create_entity_with<TrackballComponent>();
+c_entity.oriented = true;
 
-    // constants - window?
-    int ww = 3840, wh = 1080;
+// constants - window?
+int ww = 3840, wh = 1080;
 
-    // make framebuffer
-    Framebuffer fb, fb_shadow;
-    RGB8Texture color_map, color_map_shadow;
-    D32FTexture depth_map, depth_map_shadow;
+// make framebuffer
+Framebuffer fb, fb_shadow;
+RGB8Texture color_map, color_map_shadow;
+D32FTexture depth_map, depth_map_shadow;
 
-    auto realloc = [&](int w, int h) {
-        color_map.allocate(w, h);
-        depth_map.allocate(w, h);
-    };
+auto realloc = [&](int w, int h) {
+    color_map.allocate(w, h);
+    depth_map.allocate(w, h);
+};
 
-    realloc(ww, wh);
+realloc(ww, wh);
 
-    depth_map_shadow.allocate(shadow_size, shadow_size);
-    color_map_shadow.allocate(shadow_size, shadow_size);
+depth_map_shadow.allocate(shadow_size, shadow_size);
+color_map_shadow.allocate(shadow_size, shadow_size);
 
-    fb.attach_color_texture(color_map);
-    fb.attach_depth_texture(depth_map);
+fb.attach_color_texture(color_map);
+fb.attach_depth_texture(depth_map);
 
-    fb_shadow.attach_color_texture(color_map_shadow);
-    fb_shadow.attach_depth_texture(depth_map_shadow);
+fb_shadow.attach_color_texture(color_map_shadow);
+fb_shadow.attach_depth_texture(depth_map_shadow);
 
-    RGB8Texture colmap;
-    Image<Eigen::Matrix<uint8_t, 3, 1>> colmap_cpu(2048, 2048);
-    // Read in texture binary
-    // TODO - what is it doing here?
-    // CHANGE?
-    std::ifstream("texture.bin", std::ios::binary).read(
+RGB8Texture colmap;
+Image<Eigen::Matrix<uint8_t, 3, 1>> colmap_cpu(2048, 2048);
+// Read in texture binary
+// TODO - what is it doing here?
+// CHANGE?
+std::ifstream("texture.bin", std::ios::binary).read(
         reinterpret_cast<char*>(&colmap_cpu(0, 0)), 12582912);
-    colmap.upload(colmap_cpu);
+colmap.upload(colmap_cpu);
 
-    FullscreenQuad fsquad;
+FullscreenQuad fsquad;
 
-    // TODO - change defaults? Does this change the view?
-    // No, change where says set_defaults
-    bool show_pills = false;
-    bool splitscreen = false;
-    // bool splitscreen = true;
+// TODO - change defaults? Does this change the view?
+// No, change where says set_defaults
+bool show_pills = false;
+bool splitscreen = false;
+// bool splitscreen = true;
 
-    // function to set pill visibility of octopi
-    auto set_pill_visibility = [&](bool visible) {
-        show_pills = visible;
-        octoswarm.render_comp->visible = !visible;
-        octoswarm.sphere_render_comp->visible = visible;
-        octoswarm.vis_update();
-    };
+// function to set pill visibility of octopi
+auto set_pill_visibility = [&](bool visible) {
+    show_pills = visible;
+    octoswarm.render_comp->visible = !visible;
+    octoswarm.sphere_render_comp->visible = visible;
+    octoswarm.vis_update();
+};
 
-    // function to draw scene
-    auto draw_scene = [&](int width, int height, int x, int y) {
-        //======================================================================
-        // Draw shadow map
+// function to draw scene
+auto draw_scene = [&](int width, int height, int x, int y) {
+    //======================================================================
+    // Draw shadow map
 
-        fb_shadow.bind();
+    fb_shadow.bind();
 
-        light_entity.draw(shadow_size, shadow_size);
+    light_entity.draw(shadow_size, shadow_size);
 
-        fb_shadow.unbind();
+    fb_shadow.unbind();
 
-        //======================================================================
-        // Draw scene with shadows
+    //======================================================================
+    // Draw scene with shadows
 
-        fb.bind();
+    fb.bind();
 
-        glActiveTexture(GL_TEXTURE5);
-        colmap.bind();
-        glActiveTexture(GL_TEXTURE7);
-        depth_map_shadow.bind();
+    glActiveTexture(GL_TEXTURE5);
+    colmap.bind();
+    glActiveTexture(GL_TEXTURE7);
+    depth_map_shadow.bind();
 
-        glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
 
-        // set up camera
-        auto &cam = c_entity.get<CameraComponent>();
+    // set up camera
+    auto &cam = c_entity.get<CameraComponent>();
 
-        cam.draw(color_map.get_width(), color_map.get_height(), 0, 0, false);
+    cam.draw(color_map.get_width(), color_map.get_height(), 0, 0, false);
 
-        // if sphere component is visible
-        if (octoswarm.sphere_render_comp->visible) {
-            RenderContext context;
+    // if sphere component is visible
+    if (octoswarm.sphere_render_comp->visible) {
+        RenderContext context;
 
-            glDepthMask(GL_FALSE);
+        glDepthMask(GL_FALSE);
 
-            context.aspect =
-                (float)color_map.get_width() / (float)color_map.get_height();
-            context.vfov = cam.vfov;
-            context.near = cam.near_plane;
-            context.far = cam.far_plane;
-            context.eye = cam.get<TransformComponent>().position;
-            context.forward = cam.get<TransformComponent>().forward();
-            context.up = cam.get<TransformComponent>().up();
+        context.aspect =
+            (float)color_map.get_width() / (float)color_map.get_height();
+        context.vfov = cam.vfov;
+        context.near = cam.near_plane;
+        context.far = cam.far_plane;
+        context.eye = cam.get<TransformComponent>().position;
+        context.forward = cam.get<TransformComponent>().forward();
+        context.up = cam.get<TransformComponent>().up();
 
-            context.update_view();
-            context.update_projection();
+        context.update_view();
+        context.update_projection();
 
-            auto &renderable = *octoswarm.tsphere_render_comp;
-            auto &transform = renderable.get<TransformComponent>();
+        auto &renderable = *octoswarm.tsphere_render_comp;
+        auto &transform = renderable.get<TransformComponent>();
 
-            context.translation = transform.position;
-            context.scale = transform.scale;
-            context.rotation = transform.rotation;
+        context.translation = transform.position;
+        context.scale = transform.scale;
+        context.rotation = transform.rotation;
 
-            context.update_model();
+        context.update_model();
 
-            glEnable(GL_DEPTH_TEST);
-            renderable.get_renderer().render(context);
+        glEnable(GL_DEPTH_TEST);
+        renderable.get_renderer().render(context);
 
-            glDepthMask(GL_TRUE);
-        }
+        glDepthMask(GL_TRUE);
+    }
 
-        cam.draw_gui();
+    cam.draw_gui();
 
-        fb.unbind();
+    fb.unbind();
 
-        //======================================================================
-        // Draw color map to window
+    //======================================================================
+    // Draw color map to window
 
-        glViewport(x, y, width, height);
-        fsquad.draw_texture(color_map);
-    };
+    glViewport(x, y, width, height);
+    fsquad.draw_texture(color_map);
+};
 
-    // make window function
-    auto &window = app.create_window([&](Window &window) {
+// make window function
+auto &window = app.create_window([&](Window &window) {
         std::tie(ww, wh) = window.get_size();
 
         // TODO - what is this variable? splitscreen
@@ -368,112 +368,112 @@ int main(int argc, char **argv) {
         int fbh = color_map.get_height();
 
         if (fbw_new != fbw || fbh_new != fbh) {
-            realloc(fbw_new, fbh_new);
+        realloc(fbw_new, fbh_new);
         }
 
         // if splitscreen, do half and half pill vilibility
         if (splitscreen) {
-            // draw left half pills invisible
-            set_pill_visibility(false);
-            draw_scene(ww / 2, wh, 0, 0);
-            // draw right half pills visible
-            set_pill_visibility(true);
-            draw_scene(ww / 2, wh, ww / 2, 0);
+        // draw left half pills invisible
+        set_pill_visibility(false);
+        draw_scene(ww / 2, wh, 0, 0);
+        // draw right half pills visible
+        set_pill_visibility(true);
+        draw_scene(ww / 2, wh, ww / 2, 0);
         } else {
             // if not split screen, call octoswarm.vis_update
             // TODO - what is vis_udpate?
             octoswarm.vis_update();
             draw_scene(ww, wh, 0, 0);
         }
-    });
+});
 
-    // set window size and title
-    window.set_size(ww, wh);
-    window.set_title("VIPER Demo");
+// set window size and title
+window.set_size(ww, wh);
+window.set_title("VIPER Demo");
 
-    // set up input
-    // TODO - keyboard / mouse?
-    auto &input = window.get_input();
+// set up input
+// TODO - keyboard / mouse?
+auto &input = window.get_input();
 
-    // TODO - camera position? Could be important
-    // CHANGE
-    c_entity.get<CameraComponent>().set_window(window);
-    // c_entity.center = Vec3(0, 1, 0);
-    // c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
-    // change this to move in opposite direction that you would think
-    c_entity.center = Vec3(-30, 1, -10);
-    // making z negative moes closer
-    c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
+// TODO - camera position? Could be important
+// CHANGE
+c_entity.get<CameraComponent>().set_window(window);
+// c_entity.center = Vec3(0, 1, 0);
+// c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
+// change this to move in opposite direction that you would think
+c_entity.center = Vec3(-30, 1, -10);
+// making z negative moes closer
+c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
 
 
-    // TODO - what is this
-    auto &bsphere_entity = scene.create_entity_with<WorldRenderComponent>();
-    auto &bsphere_renderer = bsphere_entity.set_renderer<SphereMeshRenderer>();
+// TODO - what is this
+auto &bsphere_entity = scene.create_entity_with<WorldRenderComponent>();
+auto &bsphere_renderer = bsphere_entity.set_renderer<SphereMeshRenderer>();
 
-    // get mouse position
-    auto get_mouse_ray = [&](Vec3 &eye, Vec3 &dir) {
-        // get position
-        Vec2 pos = input.mouse_position;
-        pos[1] = wh - pos[1];
+// get mouse position
+auto get_mouse_ray = [&](Vec3 &eye, Vec3 &dir) {
+    // get position
+    Vec2 pos = input.mouse_position;
+    pos[1] = wh - pos[1];
 
-        int w = splitscreen ? ww / 2 : ww;
-        pos = 2 * pos.cwiseQuotient(Vec2(w, wh)) - Vec2(1, 1);
+    int w = splitscreen ? ww / 2 : ww;
+    pos = 2 * pos.cwiseQuotient(Vec2(w, wh)) - Vec2(1, 1);
 
-        Vec4 cs(pos[0], pos[1], 0.1, 1);
+    Vec4 cs(pos[0], pos[1], 0.1, 1);
 
-        // TODO - what do? rotate?
-        auto &cam = c_entity.get<CameraComponent>();
-        Mat4x4 inv_mat = (cam.get_projection(w, wh) * cam.get_view()).inverse();
+    // TODO - what do? rotate?
+    auto &cam = c_entity.get<CameraComponent>();
+    Mat4x4 inv_mat = (cam.get_projection(w, wh) * cam.get_view()).inverse();
 
-        Vec4 world = inv_mat * cs;
-        Vec3 p = world.head<3>() / world[3];
+    Vec4 world = inv_mat * cs;
+    Vec3 p = world.head<3>() / world[3];
 
-        eye = c_entity.get<TransformComponent>().position;
-        dir = (p - eye).normalized();
-    };
+    eye = c_entity.get<TransformComponent>().position;
+    dir = (p - eye).normalized();
+};
 
-    // variables to keep track of runtime performance
-    int framerate = 0;
-    double frametime = 0;
-    double sim_frametime = 0;
+// variables to keep track of runtime performance
+int framerate = 0;
+double frametime = 0;
+double sim_frametime = 0;
 
-    float playback = 1.0;
+float playback = 1.0;
 
-    int it_count = 10;
+int it_count = 10;
 
-    // TODO - change?
-    bool hide_gui = false;
-    bool simulating = true;
-    bool single_step = false;
-    bool bsphere_vis = false;
+// TODO - change?
+bool hide_gui = false;
+bool simulating = true;
+bool single_step = false;
+bool bsphere_vis = false;
 
-    std::vector<float> framerates(120);
+std::vector<float> framerates(120);
 
-    // defaults for settings and physics
-    auto set_defaults = [&]() {
-        // TODO - change this to show pills??
-        // show_pills = false;
-        show_pills = true;
-        octoswarm.render_comp->visible = !show_pills;
-        octoswarm.sphere_render_comp->visible = show_pills;
-        it_count = 10;
-        sim_scene.gravity_strength = 1.0;
-        playback = 1.0;
-    };
+// defaults for settings and physics
+auto set_defaults = [&]() {
+    // TODO - change this to show pills??
+    // show_pills = false;
+    show_pills = true;
+    octoswarm.render_comp->visible = !show_pills;
+    octoswarm.sphere_render_comp->visible = show_pills;
+    it_count = 10;
+    sim_scene.gravity_strength = 1.0;
+    playback = 1.0;
+};
 
-    set_defaults();
+set_defaults();
 
-    // Create GUI
-    auto &canvas = scene.create_entity_with<GUICanvasComponent>();
-    canvas.set_action([&]() {
+// Create GUI
+auto &canvas = scene.create_entity_with<GUICanvasComponent>();
+canvas.set_action([&]() {
         if (hide_gui)
-            return;
+        return;
 
         ImGui::SetNextWindowSize(ImVec2(400, 500));
 
         ImGui::Begin("Controls", nullptr,
-                     ImGuiWindowFlags_NoResize |
-                         ImGuiWindowFlags_NoSavedSettings);
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoSavedSettings);
 
         char fr_label[256];
         sprintf(fr_label,
@@ -481,7 +481,7 @@ int main(int argc, char **argv) {
                 framerate, frametime, sim_frametime);
 
         ImGui::PlotLines(fr_label, &(framerates[0]), framerates.size(), 0, "",
-                         0, 60);
+                0, 60);
 
         ImGui::Separator();
 
@@ -520,10 +520,10 @@ int main(int argc, char **argv) {
         ImGui::Separator();
 
         const char *const scenes[] = {"Empty", "Pillars", "Cannonballs",
-                                      "Explosion"};
+            "Explosion"};
 
         if (ImGui::ListBox("Scenes", &octoswarm.scene_index, scenes,
-                           sizeof(scenes) / sizeof(scenes[0]))) {
+                    sizeof(scenes) / sizeof(scenes[0]))) {
             // TODO - resets octoswarm from beginning of simulation? could be important
             octoswarm.reset();
         }
@@ -540,33 +540,43 @@ int main(int argc, char **argv) {
         ImGui::Text("Show/Hide Window:                F12");
 
         ImGui::End();
-    });
+});
 
-    // place camera
-    canvas.set_camera(c_entity.get<CameraComponent>());
+// place camera
+canvas.set_camera(c_entity.get<CameraComponent>());
 
-    int chambered_cow = 0;
+int chambered_cow = 0;
 
-    long frame = 0;
-    long sim_frame = 0;
+long frame = 0;
+long sim_frame = 0;
 
-    // keep track of statistics
-    double last_time = glfwGetTime();
-    double frame_avg = 0;
-    double sim_frame_avg = 0;
+// keep track of statistics
+double last_time = glfwGetTime();
+double frame_avg = 0;
+double sim_frame_avg = 0;
 
-    int held = 0;
-    int selected = -1;
+int held = 0;
+int selected = -1;
 
-    // TODO - idk what this is 
-    bool swapped_pills = false;
-    bool swapped_pause = false;
-    bool swapped_window = false;
-    bool recentered = false;
+// TODO - idk what this is 
+bool swapped_pills = false;
+bool swapped_pause = false;
+bool swapped_window = false;
+bool recentered = false;
 
-    // app event listener
-    app.add_listener<ApplicationUpdateEvent>(
+// app event listener
+unsigned i = 0;
+app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
+        i++;
+            if (i >= 60 & (i-60) < sim_scene.constraints.stretch.size()) {
+                unsigned j = i - 60;
+                if (!(j%3 == 0) & j > 90){
+                    sim_scene.constraints.stretch[i-60].L *= .5;
+                } else {
+                    sim_scene.constraints.stretch[i-60].L *= 1.2;
+                }
+            }
             SphereMesh temp_smesh;
             auto vs_temp =
                 temp_smesh.add_vertex(viper::CollisionGrid::b_sphere);
