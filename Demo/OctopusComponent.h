@@ -78,8 +78,8 @@ class OctopusComponent : public Component {
     static viper::Scene *v_scene;
 
     // TODO - test this
-    // num of octopi to simulate?
-    const int n_cows = 90;
+    // num of octopi to simulate
+    const int n_cows = 45;
     int n_active = 90;
 
     // which scene - normal, pillars, etc.
