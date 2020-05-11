@@ -709,6 +709,12 @@ class OctopusComponent : public Component {
                     v_scene->constraints.stretch.size());
                 // to change dynamically, I think we're going to need to somehow save
                 // the references to the ones we care about in v_scene.constraints.stretch
+                // constraints.stretch is vector of type C_stretch
+                // C_stretch - (a, b, c, L, compliance)
+                // int a, b - particle ids
+                // int c - pill id
+                // float L - rest length
+                // float compliance 
                 v_scene->constraints.stretch.push_back(viper::C_stretch(
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));

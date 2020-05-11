@@ -247,271 +247,242 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
     using tuple = std::tuple<Vec2i, bool, float>;
     // last element in tuple is compliance, lower is stiffer, higher is more compliant
     std::vector<tuple> pill_flags = {
-        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle1.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle1.3"]), true, 0.0001f),
+
+        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle2.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle2.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle2.3"]), true, 0.0001f),
+
+        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle3.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle3.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle3.3"]), true, 0.0001f),
+
+        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle4.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle4.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle4.2"], sphere_ids["tentacle4.3"]), true, 0.0001f),
+
+        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle5.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle5.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle5.2"], sphere_ids["tentacle5.3"]), true, 0.0001f),
+
+        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle6.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle6.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle6.2"], sphere_ids["tentacle6.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle2.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle1.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle7.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle7.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle7.2"], sphere_ids["tentacle7.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle2.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle8.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle8.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle8.2"], sphere_ids["tentacle8.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle1.3"], sphere_ids["tentacle2.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle2.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle2.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle9.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle9.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle9.2"], sphere_ids["tentacle9.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle3.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle2.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle10.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle10.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle10.2"], sphere_ids["tentacle10.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle3.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle11.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle11.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle11.2"], sphere_ids["tentacle11.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle2.3"], sphere_ids["tentacle3.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle3.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle3.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle12.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle12.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle12.2"], sphere_ids["tentacle12.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle4.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle3.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle13.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle13.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle13.2"], sphere_ids["tentacle13.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle4.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle14.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle14.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle14.2"], sphere_ids["tentacle14.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle3.3"], sphere_ids["tentacle4.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle4.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle4.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle15.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle15.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle15.2"], sphere_ids["tentacle15.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle5.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle4.2"], sphere_ids["tentacle4.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle16.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle16.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle16.2"], sphere_ids["tentacle16.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle4.2"], sphere_ids["tentacle5.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle17.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle17.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle17.2"], sphere_ids["tentacle17.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle4.3"], sphere_ids["tentacle5.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle5.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle5.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle18.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle18.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle18.2"], sphere_ids["tentacle18.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle6.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle5.2"], sphere_ids["tentacle5.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle19.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle19.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle19.2"], sphere_ids["tentacle19.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle5.2"], sphere_ids["tentacle6.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle20.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle20.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle20.2"], sphere_ids["tentacle20.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle5.3"], sphere_ids["tentacle6.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle6.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle6.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle21.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle21.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle21.2"], sphere_ids["tentacle21.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle7.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle6.2"], sphere_ids["tentacle6.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle22.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle22.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle22.2"], sphere_ids["tentacle22.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle6.2"], sphere_ids["tentacle7.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle23.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle23.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle23.2"], sphere_ids["tentacle23.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle6.3"], sphere_ids["tentacle7.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle7.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle7.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle24.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle24.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle24.2"], sphere_ids["tentacle24.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle8.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle7.2"], sphere_ids["tentacle7.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle25.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle25.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle25.2"], sphere_ids["tentacle25.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle7.2"], sphere_ids["tentacle8.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle26.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle26.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle26.2"], sphere_ids["tentacle26.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle7.3"], sphere_ids["tentacle8.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle8.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle8.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle27.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle27.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle27.2"], sphere_ids["tentacle27.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle9.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle8.2"], sphere_ids["tentacle8.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle28.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle28.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle28.2"], sphere_ids["tentacle28.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle8.2"], sphere_ids["tentacle9.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle29.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle29.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle29.2"], sphere_ids["tentacle29.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle8.3"], sphere_ids["tentacle9.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle9.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle9.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle30.1"], sphere_ids["tentacle30.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle30.1"], sphere_ids["tentacle30.3"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle30.2"], sphere_ids["tentacle30.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle10.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle9.2"], sphere_ids["tentacle9.3"]), true, 0.01f),
 
-        tuple(Vec2i(sphere_ids["tentacle9.2"], sphere_ids["tentacle10.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle1.1"], sphere_ids["tentacle2.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle1.2"], sphere_ids["tentacle2.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle1.3"], sphere_ids["tentacle2.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle9.3"], sphere_ids["tentacle10.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle10.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle10.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle2.1"], sphere_ids["tentacle3.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle2.2"], sphere_ids["tentacle3.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle2.3"], sphere_ids["tentacle3.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle11.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle10.2"], sphere_ids["tentacle10.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle3.1"], sphere_ids["tentacle4.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle3.2"], sphere_ids["tentacle4.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle3.3"], sphere_ids["tentacle4.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle10.2"], sphere_ids["tentacle11.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle4.1"], sphere_ids["tentacle5.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle4.2"], sphere_ids["tentacle5.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle4.3"], sphere_ids["tentacle5.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle10.3"], sphere_ids["tentacle11.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle11.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle11.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle5.1"], sphere_ids["tentacle6.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle5.2"], sphere_ids["tentacle6.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle5.3"], sphere_ids["tentacle6.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle12.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle11.2"], sphere_ids["tentacle11.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle6.1"], sphere_ids["tentacle7.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle6.2"], sphere_ids["tentacle7.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle6.3"], sphere_ids["tentacle7.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle11.2"], sphere_ids["tentacle12.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle7.1"], sphere_ids["tentacle8.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle7.2"], sphere_ids["tentacle8.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle7.3"], sphere_ids["tentacle8.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle11.3"], sphere_ids["tentacle12.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle12.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle12.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle8.1"], sphere_ids["tentacle9.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle8.2"], sphere_ids["tentacle9.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle8.3"], sphere_ids["tentacle9.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle13.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle12.2"], sphere_ids["tentacle12.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle9.1"], sphere_ids["tentacle10.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle9.2"], sphere_ids["tentacle10.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle9.3"], sphere_ids["tentacle10.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle12.2"], sphere_ids["tentacle13.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle10.1"], sphere_ids["tentacle11.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle10.2"], sphere_ids["tentacle11.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle10.3"], sphere_ids["tentacle11.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle12.3"], sphere_ids["tentacle13.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle13.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle13.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle11.1"], sphere_ids["tentacle12.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle11.2"], sphere_ids["tentacle12.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle11.3"], sphere_ids["tentacle12.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle14.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle13.2"], sphere_ids["tentacle13.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle12.1"], sphere_ids["tentacle13.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle12.2"], sphere_ids["tentacle13.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle12.3"], sphere_ids["tentacle13.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle13.2"], sphere_ids["tentacle14.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle13.1"], sphere_ids["tentacle14.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle13.2"], sphere_ids["tentacle14.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle13.3"], sphere_ids["tentacle14.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle13.3"], sphere_ids["tentacle14.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle14.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle14.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle15.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle14.2"], sphere_ids["tentacle15.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle14.3"], sphere_ids["tentacle15.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle14.1"], sphere_ids["tentacle15.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle14.2"], sphere_ids["tentacle14.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle16.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle15.2"], sphere_ids["tentacle16.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle15.3"], sphere_ids["tentacle16.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle14.2"], sphere_ids["tentacle15.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle17.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle16.2"], sphere_ids["tentacle17.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle16.3"], sphere_ids["tentacle17.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle14.3"], sphere_ids["tentacle15.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle15.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle15.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle18.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle17.2"], sphere_ids["tentacle18.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle17.3"], sphere_ids["tentacle18.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle15.1"], sphere_ids["tentacle16.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle15.2"], sphere_ids["tentacle15.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle19.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle18.2"], sphere_ids["tentacle19.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle18.3"], sphere_ids["tentacle19.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle15.2"], sphere_ids["tentacle16.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle20.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle19.2"], sphere_ids["tentacle20.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle19.3"], sphere_ids["tentacle20.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle15.3"], sphere_ids["tentacle16.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle16.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle16.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle21.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle20.2"], sphere_ids["tentacle21.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle20.3"], sphere_ids["tentacle21.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle16.1"], sphere_ids["tentacle17.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle16.2"], sphere_ids["tentacle16.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle22.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle21.2"], sphere_ids["tentacle22.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle21.3"], sphere_ids["tentacle22.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle16.2"], sphere_ids["tentacle17.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle23.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle22.2"], sphere_ids["tentacle23.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle22.3"], sphere_ids["tentacle23.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle16.3"], sphere_ids["tentacle17.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle17.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle17.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle24.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle23.2"], sphere_ids["tentacle24.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle23.3"], sphere_ids["tentacle24.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle17.1"], sphere_ids["tentacle18.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle17.2"], sphere_ids["tentacle17.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle25.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle24.2"], sphere_ids["tentacle25.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle24.3"], sphere_ids["tentacle25.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle17.2"], sphere_ids["tentacle18.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle26.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle25.2"], sphere_ids["tentacle26.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle25.3"], sphere_ids["tentacle26.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle17.3"], sphere_ids["tentacle18.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle18.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle18.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle27.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle26.2"], sphere_ids["tentacle27.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle26.3"], sphere_ids["tentacle27.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle18.1"], sphere_ids["tentacle19.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle18.2"], sphere_ids["tentacle18.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle28.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle27.2"], sphere_ids["tentacle28.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle27.3"], sphere_ids["tentacle28.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle18.2"], sphere_ids["tentacle19.2"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle29.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle28.2"], sphere_ids["tentacle29.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle28.3"], sphere_ids["tentacle29.3"]), true, 0.0001f),
 
-        tuple(Vec2i(sphere_ids["tentacle18.3"], sphere_ids["tentacle19.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle19.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle19.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle19.1"], sphere_ids["tentacle20.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle19.2"], sphere_ids["tentacle19.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle19.2"], sphere_ids["tentacle20.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle19.3"], sphere_ids["tentacle20.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle20.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle20.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle20.1"], sphere_ids["tentacle21.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle20.2"], sphere_ids["tentacle20.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle20.2"], sphere_ids["tentacle21.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle20.3"], sphere_ids["tentacle21.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle21.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle21.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle21.1"], sphere_ids["tentacle22.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle21.2"], sphere_ids["tentacle21.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle21.2"], sphere_ids["tentacle22.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle21.3"], sphere_ids["tentacle22.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle22.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle22.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle22.1"], sphere_ids["tentacle23.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle22.2"], sphere_ids["tentacle22.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle22.2"], sphere_ids["tentacle23.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle22.3"], sphere_ids["tentacle23.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle23.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle23.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle23.1"], sphere_ids["tentacle24.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle23.2"], sphere_ids["tentacle23.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle23.2"], sphere_ids["tentacle24.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle23.3"], sphere_ids["tentacle24.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle24.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle24.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle24.1"], sphere_ids["tentacle25.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle24.2"], sphere_ids["tentacle24.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle24.2"], sphere_ids["tentacle25.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle24.3"], sphere_ids["tentacle25.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle25.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle25.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle25.1"], sphere_ids["tentacle26.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle25.2"], sphere_ids["tentacle25.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle25.2"], sphere_ids["tentacle26.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle25.3"], sphere_ids["tentacle26.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle26.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle26.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle26.1"], sphere_ids["tentacle27.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle26.2"], sphere_ids["tentacle26.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle26.2"], sphere_ids["tentacle27.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle26.3"], sphere_ids["tentacle27.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle27.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle27.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle27.1"], sphere_ids["tentacle28.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle27.2"], sphere_ids["tentacle27.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle27.2"], sphere_ids["tentacle28.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle27.3"], sphere_ids["tentacle28.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle28.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle28.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle28.1"], sphere_ids["tentacle29.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle28.2"], sphere_ids["tentacle28.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle28.2"], sphere_ids["tentacle29.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle28.3"], sphere_ids["tentacle29.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle29.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle29.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle30.1"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle29.2"], sphere_ids["tentacle29.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle29.2"], sphere_ids["tentacle30.2"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle29.3"], sphere_ids["tentacle30.3"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle30.1"], sphere_ids["tentacle30.2"]), true, 0.01f),
-        tuple(Vec2i(sphere_ids["tentacle30.1"], sphere_ids["tentacle30.3"]), true, 0.01f),
-
-        tuple(Vec2i(sphere_ids["tentacle30.2"], sphere_ids["tentacle30.3"]), true, 0.01f),
+        tuple(Vec2i(sphere_ids["tentacle29.1"], sphere_ids["tentacle30.1"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle29.2"], sphere_ids["tentacle30.2"]), true, 0.0001f),
+        tuple(Vec2i(sphere_ids["tentacle29.3"], sphere_ids["tentacle30.3"]), true, 0.0001f),
 
     };
     // TODO - idk what is
