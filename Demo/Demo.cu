@@ -262,8 +262,8 @@ fb_shadow.attach_depth_texture(depth_map_shadow);
 RGB8Texture colmap;
 Image<Eigen::Matrix<uint8_t, 3, 1>> colmap_cpu(2048, 2048);
 // Read in texture binary
-// TODO - what is it doing here?
-// CHANGE?
+// WINGATE
+// TODO - change this to read in Tentacle_diffuse.png or Tentacle_convert.mtl
 std::ifstream("texture.bin", std::ios::binary).read(
         reinterpret_cast<char*>(&colmap_cpu(0, 0)), 12582912);
 colmap.upload(colmap_cpu);
@@ -451,7 +451,10 @@ std::vector<float> framerates(120);
 
 // defaults for settings and physics
 auto set_defaults = [&]() {
-    // TODO - change this to show pills??
+    // WINGATE
+    // CHANGE THIS TO SHOW PILLS OR MESH
+    // false - show mesh
+    // true - show VIPER primitives
     // show_pills = false;
     show_pills = true;
     octoswarm.render_comp->visible = !show_pills;

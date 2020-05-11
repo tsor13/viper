@@ -369,8 +369,10 @@ class OctopusComponent : public Component {
         // read in SurfaceMesh for octopus
         {
             SurfaceMesh tempmesh;
-            bool tentacle = false;
-            if (tentacle){
+            // WINGATE
+            // TOGGLE THIS TO READ TENTACLE OR OCTOPUS
+            bool read_tentacle = false;
+            if (read_tentacle){ // READ IN TENTACLE OBJ
                 bool success = tempmesh.read("Tentacle_convert.obj");
                 std::cout << "Read tentacle exited with code: " << success << std::endl;
                 auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
@@ -381,37 +383,7 @@ class OctopusComponent : public Component {
                     vpindex[vert] = i;
                     i++;
                 }
-
-                // for (auto vert : temp2.vertices()) {
-                //     auto v = tempmesh.add_vertex(points[vert]);
-                // }
-
-                // // Vertex Properties
-                // // Vec2 texture coordinates
-                // auto vtexcoord = tempmesh.add_vertex_property<Vec2>("v:texcoord");
-                // // Vec3 normal vectors
-                // auto vnormal = tempmesh.add_vertex_property<Vec3>("v:normal");
-                // // int p index
-                // auto vpindex = tempmesh.add_vertex_property<int>("v:pindex");
-
-                // unsigned i = 0;
-                // // for each vertex, add vertex properties to tempmesh
-                // for (auto vert : tempmesh.vertices()){
-                //     vnormal[vert] = normals[vert];
-                //     // vtexcoord[vert] = ??
-                //     vpindex[vert] = i;
-                //     i++;
-                // }
-                // for (auto face : temp2.faces()){
-                //     tempmesh.add_face(face);
-                // }
-                // // for each face, add to tempmesh
-                // for (int i = 0; i < 12312; ++i) {
-                //     tempmesh.add_triangle(SurfaceMesh::Vertex(trivec[3*i]),
-                //                     SurfaceMesh::Vertex(trivec[3*i + 1]),
-                //                     SurfaceMesh::Vertex(trivec[3*i + 2]));
-                // }
-            } else {
+            } else { // READ IN OCTOPUS
                 // read in from mesh.bin
                 std::ifstream istream("mesh.bin", std::ios::binary);
 
@@ -745,14 +717,17 @@ class OctopusComponent : public Component {
 
         // TODO - where does get transforms come from?
         init_transforms = get_transforms();
-        std::cout << "Reached mid1" << std::endl;
+        std::cout << "Uploading mesh to renderer" << std::endl;
         renderer->upload_mesh(mesh, get_transforms());
         // TODO - commenting out doesn't seem to affect?
-        std::cout << "Reached mid2" << std::endl;
+        std::cout << "Uploading vertex texture coordinates to mesh" << std::endl;
+        // WINGATE
+        // The only time I've had success with loading the points for the tentacle has been when I comment out
+        // the below line of code.
+        // Also, it's spotty. Sometimes it displays the octopus texture on the tentacle, sometimes nothing at all
         // gpu_mesh of type GPUMesh
         renderer->get_gpu_mesh().set_vtexcoord(
             mesh.get_vertex_property<Vec2>("v:texcoord").vector());
-        std::cout << "Reached mid3" << std::endl;
 
         // defined below
         reset();
