@@ -400,8 +400,10 @@ int main(int argc, char **argv) {
     c_entity.get<CameraComponent>().set_window(window);
     // c_entity.center = Vec3(0, 1, 0);
     // c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
-    c_entity.center = Vec3(-10, 1, 0);
-    c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
+    // change this to move in opposite direction that you would think
+    c_entity.center = Vec3(-30, 1, -10);
+    // making z negative moes closer
+    c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
 
 
     // TODO - what is this
