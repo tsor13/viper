@@ -79,7 +79,7 @@ class OctopusComponent : public Component {
 
     // TODO - test this
     // num of octopi to simulate
-    const int n_cows = 1;
+    const int n_cows = 3;
     int n_active = 90;
 
     // which scene - normal, pillars, etc.

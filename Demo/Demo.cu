@@ -398,12 +398,20 @@ auto &input = window.get_input();
 // TODO - camera position? Could be important
 // CHANGE
 c_entity.get<CameraComponent>().set_window(window);
+
+// ORIGINAL
 // c_entity.center = Vec3(0, 1, 0);
 // c_entity.get<TransformComponent>().position = Vec3(-12, 1, 0);
+
+// SINGLE BIG TENTACLE
+// c_entity.center = Vec3(-30, 1, -10);
+// c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
+
 // change this to move in opposite direction that you would think
-c_entity.center = Vec3(-30, 1, -10);
+// increasing y moves further down
+c_entity.center = Vec3(-50, 20, 40);
 // making z negative moes closer
-c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
+c_entity.get<TransformComponent>().position = Vec3(-20, -50, 20);
 
 
 // TODO - what is this
