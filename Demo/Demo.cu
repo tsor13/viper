@@ -571,15 +571,16 @@ bool recentered = false;
 unsigned i = 0;
 app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
-        i++;
-            if (i >= 60 & (i-60) < sim_scene.constraints.stretch.size()) {
-                unsigned j = i - 60;
-                if (!(j%3 == 0) & j > 90){
-                    sim_scene.constraints.stretch[i-60].L *= .5;
-                } else {
-                    sim_scene.constraints.stretch[i-60].L *= 1.2;
-                }
-            }
+            // // Make muscle's contract
+            // i++;
+            // if (i >= 60 & (i-60) < sim_scene.constraints.stretch.size()) {
+            //     unsigned j = i - 60;
+            //     if (!(j%3 == 0) & j > 90){
+            //         sim_scene.constraints.stretch[i-60].L *= .5;
+            //     } else {
+            //         sim_scene.constraints.stretch[i-60].L *= 1.2;
+            //     }
+            // }
             SphereMesh temp_smesh;
             auto vs_temp =
                 temp_smesh.add_vertex(viper::CollisionGrid::b_sphere);
