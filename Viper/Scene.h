@@ -32,7 +32,7 @@ struct Scene {
     void addRod(int n, Vec3 start, Vec3 step, float r, bool volume,
                 IntArray &pIds, IntArray &rIds, float stretch_eta = 0.0f,
                 float volume_eta = 0.0f, float bilap_eta = 0.0f);
-    double step(float timestep, int iterations = 20, bool floor = false,
+    double step(float timestep, int iterations = 21, bool floor = false,
                 float damping = 0.9999f);
     void clear();
     void reset();

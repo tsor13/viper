@@ -59,8 +59,10 @@ class SimulationState {
     QuaternionArray qi; // initial orientation
     FloatArray ri;      // initial radii
 
+    // X active, X initial
     std::vector<uint8_t> xa;
     std::vector<uint8_t> xai;
+    // angular rotation, initial angular rotation
     std::vector<uint8_t> qa;
     std::vector<uint8_t> qai;
 
