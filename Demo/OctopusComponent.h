@@ -24,8 +24,9 @@
 
 #include "tiny_obj_loader.h"
 
-// Load Demo/Viper files
+// Load Demo file
 #include "Octopus.h"
+// Load VIPER files
 #include "Scene.h"
 #include "Subprocess.h"
 #include "Viper_json.h"
@@ -79,13 +80,15 @@ class OctopusComponent : public Component {
 
     // TODO - test this
     // num of octopi to simulate
-    const int n_cows = 3;
+    const int n_cows = 1;
     int n_active = 90;
 
     // which scene - normal, pillars, etc.
-    int scene_index = 0;
+    // 0 - normal
+    // 1 - pillars
+    // 2 - cannonballs
+    int scene_index = 1;
 
-    // TODO - test
     // what is active cannonball?
     bool cannonballs_active = false;
 
@@ -348,7 +351,7 @@ class OctopusComponent : public Component {
         pillar_renderer->get_material().set_property("material", VIPER_GREY);
         pillar_renderer->rebuild();
 
-        // to make pillars I believe?
+        // make pillars
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 5; ++j) {
 
@@ -535,7 +538,6 @@ class OctopusComponent : public Component {
             j.Accept(writer);
 
             // run Sphereweights, which calculates weights to mesh I'm assuming
-            // TODO - I think it's been exiting 0? Don't we want 1?
             int proc_return =
                 viper::run_process("sphereweights", strbuf.GetString(), output);
             std::cout << "Sphereweights exited with code: " << proc_return
@@ -550,7 +552,7 @@ class OctopusComponent : public Component {
             // read in weights (floats matrix)
             auto all_weights =
                 viper::from_json<std::vector<std::vector<float>>>(j["weights"]);
-                // read in bone ids (ints)
+            // read in bone ids (ints)
             auto all_bones =
                 viper::from_json<std::vector<std::vector<int>>>(j["bone_ids"]);
 
@@ -602,18 +604,20 @@ class OctopusComponent : public Component {
             // make octopus data
             OctopusData data;
 
-            // idk? cannonball vector?
+            // cannonball displacement vector?
             Vec4 cannonball_s(0, 0, -1.5, 0.7);
 
-            // TODO - what are all the paramaters?
             // add new particle
+            // addParticle args - Vec3 &p, float r, float w, bool kinematic
+            // default - kinematic = false
             cannonball_ids[cow_id] = v_scene->addParticle(
                 cannonball_s.head<3>(), cannonball_s[3], 0.05);
             // idk?
             v_scene->pInfo[cannonball_ids[cow_id]].group = 1 + cow_id * 2;
-            // is this same pill as viper pill?
+            // add pill connecting itself to itself? necessary?
             v_scene->addPill(cannonball_ids[cow_id], cannonball_ids[cow_id]);
             // add (0, 0, -1.5, 0.7) to cannonball_smesh
+            // cannonball has this but not pillar
             cannonball_smesh.add_sphere(
                 cannonball_smesh.add_vertex(cannonball_s));
 
@@ -633,7 +637,8 @@ class OctopusComponent : public Component {
                 v_scene->constraints.radius.push_back(
                     viper::C_radius(v_ids[cow_id].back(), v[3], 1e-3));
 
-                // TODO - why?
+                // cannoball
+                // TODO - comment out? what changes
                 // if i in 10, ..., 17
                 if (i >= 10 && i < 18) {
                     // ???
@@ -782,6 +787,7 @@ class OctopusComponent : public Component {
             cannonballs_active = false;
             pillars_active = true;
 
+            // place each octopus randomly
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
                 set_position(cow_id, Vec3::Random() * 10 + Vec3(0, 12, 0),
                              Vec3::Zero());
@@ -792,6 +798,7 @@ class OctopusComponent : public Component {
             cannonballs_active = true;
             pillars_active = false;
 
+            // place each octopus randomly
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
                 set_position(cow_id, Vec3::Random() * 10 + Vec3(0, 12, 0),
                              Vec3::Zero());
@@ -802,6 +809,7 @@ class OctopusComponent : public Component {
             cannonballs_active = false;
             pillars_active = false;
 
+            // place each octopus at the origin, explodes
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
                 set_position(cow_id, Vec3::Zero(), Vec3::Zero());
             }
@@ -814,7 +822,7 @@ class OctopusComponent : public Component {
         // make pillars visible if bool
         pillar_render_comp->visible = pillars_active;
 
-        // for each octopus, set cannonball_enabled
+        // in data, set cannonball active to current value
         for (auto &data : cow_data) {
             data.set_cannonball_enabled(cannonballs_active, *v_scene);
         }
@@ -832,6 +840,8 @@ class OctopusComponent : public Component {
         // something with pillars
         for (int i = 0; i < pillar_ids.size(); ++i) {
             float offset = pillars_active ? 0 : -5;
+            // TODO - is this what fixes the positions of the pillars?
+            // I don't think so... after commenting this out, doesn't change behavior
             v_scene->state.x[pillar_ids[i]][1] =
                 offset + ((i % 2 == 0) ? 0 : 4);
         }
@@ -968,6 +978,8 @@ class OctopusComponent : public Component {
             v_scene->state.q[id] = v_scene->state.qi[id];
             v_scene->state.qp[id] = v_scene->state.qi[id];
         }
+        // TODO - is this what makes cannonballs move?
+        // I don't think so, it also adds position to scene? but maybe
         if (cannonballs_active) {
             v_scene->state.x[cannonball_ids[i]] =
                 v_scene->state.xi[cannonball_ids[i]] + pos;
