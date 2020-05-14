@@ -22,6 +22,7 @@
 
 namespace viper {
 
+// function for determining if two Vec2i are equal
 bool vec2iEquals(Vec2i a, Vec2i b) {
     return (a(0) == b(0) && a(1) == b(1)) || (a(0) == b(1) && a(1) == b(0));
 }
@@ -40,6 +41,7 @@ struct less_vec2i {
     }
 };
 
+// load mesh from OBJ file
 Mesh Mesh::loadFromOBJ(std::string path) {
     Mesh m;
     tinyobj::attrib_t attrib;
@@ -103,6 +105,7 @@ void Mesh::boundingBox(Vec3 &min, Vec3 &max) const {
     }
 }
 
+// apply transform to mesh
 Mesh Mesh::applyTransform(const Transform &T) const {
     Mesh m = *this;
     // m.triangles = triangles;
@@ -229,6 +232,7 @@ void Mesh::addQuad(int a, int b, int c, int d) {
     triangles.push_back(Vec3i(a, c, d));
 }
 
+// construct mesh from Pill
 Mesh Mesh::fromPill(const Vec3 &a, const Vec3 &b, float ra, float rb, int n,
                     int m) {
     Mesh mesh;

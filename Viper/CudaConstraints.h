@@ -15,10 +15,16 @@
 
 namespace viper {
 
+// All constraints have an enabled bool property
 struct ConstraintBase {
     bool enabled = true;
 };
 
+// distance constraint for edge
+// int a - id for vertex a
+// int b - id for vertex b
+// float restDistance - target distance for rest
+// float compliance - how compliant is the material (inverse stiffness)
 struct C_distance : public ConstraintBase {
     C_distance() = default;
     C_distance(int a, int b, float restDistance, float compliance = 0.f)
@@ -29,6 +35,7 @@ struct C_distance : public ConstraintBase {
     float compliance; // inverse stiffness
 };
 
+// max distance allowed to be stretched?
 struct C_distancemax : public ConstraintBase {
     C_distancemax() = default;
     C_distancemax(int a, int b, float max_distance)
@@ -38,6 +45,7 @@ struct C_distancemax : public ConstraintBase {
     float max_distance;
 };
 
+// TODO - ??
 struct C_skinning : public ConstraintBase {
     C_skinning() = default;
     C_skinning(int i, int t0, int t1, float w0, float w1)
@@ -49,6 +57,8 @@ struct C_skinning : public ConstraintBase {
     float w1;
 };
 
+// volume constraint
+// TODO - what's going on here
 struct C_volume : public ConstraintBase {
     C_volume() = default;
     C_volume(int a, int b, float Vr, float compliance = 0.0)
@@ -74,6 +84,7 @@ struct C_volume : public ConstraintBase {
     float compliance;
 };
 
+// volume2? length and radius? between three points?
 struct C_volume2 : public ConstraintBase {
     C_volume2() = default;
     C_volume2(int a, int b, int c, const SimulationState &state,
@@ -91,6 +102,7 @@ struct C_volume2 : public ConstraintBase {
     float r0;
 };
 
+// bend constraints
 struct C_bend : public ConstraintBase {
     C_bend() = default;
     C_bend(int a, int b, const SimulationState &state, float compliance = 0.f)
@@ -104,6 +116,7 @@ struct C_bend : public ConstraintBase {
     float compliance;
 };
 
+// stretch constraints
 struct C_stretch : public ConstraintBase {
     C_stretch() = default;
     C_stretch(int a, int b, int c, float L, float compliance = 0.f)
@@ -116,16 +129,19 @@ struct C_stretch : public ConstraintBase {
     float compliance;
 };
 
+// ?
 struct C_collpp : public ConstraintBase {
     int a;
     int b;
 };
 
+// ?
 struct C_collision : public ConstraintBase {
     Vec2i a;
     Vec2i b;
 };
 
+// radius constraint?
 struct C_radius : public ConstraintBase {
     C_radius() = default;
     C_radius(int a, float r, float compliance = 0.0)
@@ -135,6 +151,7 @@ struct C_radius : public ConstraintBase {
     float compliance;
 };
 
+// what is bilap constraint?
 struct C_bilap : public ConstraintBase {
     C_bilap() = default;
     C_bilap(const std::vector<int> &A, int i, float compliance = 0.0)
@@ -205,6 +222,7 @@ struct C_bilap : public ConstraintBase {
 
 #define SHAPE_MATCHING_MAX 11
 
+// shape constraint??
 struct C_shape : public ConstraintBase {
     C_shape() = default;
     C_shape(const std::vector<int> &ids, const SimulationState &state,
@@ -244,6 +262,7 @@ struct C_shape : public ConstraintBase {
     float compliance;
 };
 
+// ?
 struct C_shape2 : public ConstraintBase {
     C_shape2() = default;
     C_shape2(const std::vector<int> &ids, const std::vector<int> &qas,
@@ -269,6 +288,7 @@ struct C_shape2 : public ConstraintBase {
     Quaternion q;
 };
 
+// ?
 struct C_touch : public ConstraintBase {
     C_touch() = default;
     C_touch(int a, int b) : a(a), b(b) {}
@@ -276,6 +296,7 @@ struct C_touch : public ConstraintBase {
     int b;
 };
 
+// ConstraintsCPU is a collection of vectors of constraints
 struct ConstraintsCPU {
     std::vector<C_distance> distance;
     std::vector<C_distancemax> distancemax;
