@@ -580,7 +580,7 @@ unsigned i = 0;
 app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
             // // Make muscle's contract
-            // i++;
+            i++;
             // if (i >= 60 & (i-60) < sim_scene.constraints.stretch.size()) {
             //     unsigned j = i - 60;
             //     if (!(j%3 == 0) & j > 90){
@@ -589,6 +589,27 @@ app.add_listener<ApplicationUpdateEvent>(
             //         sim_scene.constraints.stretch[i-60].L *= 1.2;
             //     }
             // }
+            
+            // // move to origin
+
+            if (i < 60) {
+                int j = 51;
+                Vec3 p = sim_scene.state.x[j];
+                // std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl;
+                sim_scene.state.x[j] *= 0.95;
+                p = sim_scene.state.x[j];
+                // std::cout << p[0] << " " << p[1] << " " << p[2] << std::endl;
+                // std::cout << sim_scene.state.x[0]*10 << " " << sim_scene.state.x[1]*10 << " " << sim_scene.state.x[2]*10 <<  std::endl;
+                // // std::cout << sim_scene.state.xp[0]*10 << std::endl;
+                // std::cout << std::endl;
+            }
+            /*
+            sim_scene.state.xa[k] = 0;
+            sim_scene.state.x[k] = sim_scene.state.x[0] / 100000;
+            sim_scene.state.xp[k] = sim_scene.state.xp[0] / 100000;
+            sim_scene.state.xa[k] = 1;
+            */
+
             SphereMesh temp_smesh;
             auto vs_temp =
                 temp_smesh.add_vertex(viper::CollisionGrid::b_sphere);
