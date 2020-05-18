@@ -8,6 +8,7 @@ scale = 1
 inter_compliance = 1e-4
 other_compliance = 1e-4
 
+draw_cube = False
 cube_radius = 1
 cube_center = np.array([4.0, 4.0, 4.0])
 cube_n = 4
@@ -137,15 +138,16 @@ with open(filename, 'w') as f:
             f.write('},')
     f.write('\n')
     # write Cube vals
-    deltas = np.linspace(-cube_radius + cube_component_radius, cube_radius - cube_component_radius, cube_n)
-    for i, dx in enumerate(deltas):
-        for j, dy in enumerate(deltas):
-            for k, dz in enumerate(deltas):
-                f.write('\n        {')
-                delta = np.array([dx, dy, dz])
-                p = cube_center + delta
-                f.write('"cube{}.{}.{}", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(i+1, j+1, k+1, scale, *p, cube_component_radius))
-                f.write('},')
+    if draw_cube:
+        deltas = np.linspace(-cube_radius + cube_component_radius, cube_radius - cube_component_radius, cube_n)
+        for i, dx in enumerate(deltas):
+            for j, dy in enumerate(deltas):
+                for k, dz in enumerate(deltas):
+                    f.write('\n        {')
+                    delta = np.array([dx, dy, dz])
+                    p = cube_center + delta
+                    f.write('"cube{}.{}.{}", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(i+1, j+1, k+1, scale, *p, cube_component_radius))
+                    f.write('},')
     f.write('\n    };\n')
 
     # write masses
@@ -157,14 +159,15 @@ with open(filename, 'w') as f:
             f.write('"tentacle{}.{}", {:.3f}f'.format(i+1, j+1, (scale*joints[i,j,-1])**2))
             f.write('},')
     f.write('\n')
-    cube_mass = (scale*cube_component_radius)**2
-    for i in range(cube_n):
-        for j in range(cube_n):
-            for k in range(cube_n):
-                f.write('\n        {')
-                # mass is area (squared) of radius
-                f.write('"cube{}.{}.{}", {:.3f}f'.format(i+1, j+1, k+1, cube_mass))
-                f.write('},')
+    if draw_cube:
+        cube_mass = (scale*cube_component_radius)**3
+        for i in range(cube_n):
+            for j in range(cube_n):
+                for k in range(cube_n):
+                    f.write('\n        {')
+                    # mass is area (squared) of radius
+                    f.write('"cube{}.{}.{}", {:.3f}f'.format(i+1, j+1, k+1, cube_mass))
+                    f.write('},')
     f.write('\n    };\n')
     f.write(mid)
 
@@ -185,23 +188,24 @@ with open(filename, 'w') as f:
                 f.write('\n        tuple(Vec2i(sphere_ids["tentacle{}.{}"], sphere_ids["tentacle{}.{}"]), true, {}f),'.format(i+1, j+1, i+1, k+1, inter_compliance))
         f.write('\n')
 
-    def in_bounds(i):
-        return 0 <= i <= cube_n-1
-    for i in range(cube_n):
-        for j in range(cube_n):
-            for k in range(cube_n):
-                for i2 in [i-1, i+1]:
-                    if in_bounds(i2):
-                        f.write('\n        ')
-                        f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i2+1, j+1, k+1))
-                for j2 in [j-1, j+1]:
-                    if in_bounds(j2):
-                        f.write('\n        ')
-                        f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j2+1, k+1))
-                for k2 in [k-1, k+1]:
-                    if in_bounds(k2):
-                        f.write('\n        ')
-                        f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j+1, k2+1))
+    if draw_cube:
+        def in_bounds(i):
+            return 0 <= i <= cube_n-1
+        for i in range(cube_n):
+            for j in range(cube_n):
+                for k in range(cube_n):
+                    for i2 in [i-1, i+1]:
+                        if in_bounds(i2):
+                            f.write('\n        ')
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i2+1, j+1, k+1))
+                    for j2 in [j-1, j+1]:
+                        if in_bounds(j2):
+                            f.write('\n        ')
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j2+1, k+1))
+                    for k2 in [k-1, k+1]:
+                        if in_bounds(k2):
+                            f.write('\n        ')
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j+1, k2+1))
 
     f.write('\n    };\n')
     f.write(end)
