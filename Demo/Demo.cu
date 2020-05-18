@@ -468,7 +468,8 @@ auto set_defaults = [&]() {
     octoswarm.render_comp->visible = !show_pills;
     octoswarm.sphere_render_comp->visible = show_pills;
     it_count = 10;
-    sim_scene.gravity_strength = 1.0;
+    // sim_scene.gravity_strength = 1.0;
+    sim_scene.gravity_strength = 0.0;
     playback = 1.0;
 };
 
@@ -576,23 +577,23 @@ bool swapped_window = false;
 bool recentered = false;
 
 // app event listener
-unsigned i = 0;
+unsigned t = 0;
 unsigned delay = 60;
 app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
             // // Make muscle's contract
-            octoswarm.update();
-            i++;
-            if (i >= delay) {
-                unsigned j = i - delay + 3;
-                if (j < sim_scene.constraints.stretch.size()){
-                    if (!(j%3 == 0)){
-                        sim_scene.constraints.stretch[j].L *= .5;
-                    } else {
-                        sim_scene.constraints.stretch[j].L *= 1.2;
-                    }
-                }
-            }
+            octoswarm.update(t);
+            t++;
+            // if (i >= delay) {
+            //     unsigned j = i - delay + 3;
+            //     if (j < sim_scene.constraints.stretch.size()){
+            //         if (!(j%3 == 0)){
+            //             sim_scene.constraints.stretch[j].L *= .5;
+            //         } else {
+            //             sim_scene.constraints.stretch[j].L *= 1.2;
+            //         }
+            //     }
+            // }
             
             // // move to origin
 
