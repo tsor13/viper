@@ -49,6 +49,7 @@ struct OctopusData {
     std::vector<int> bend_constraints;
     std::vector<int> cannonball_constraints;
 
+
     // set whether each constraint is enabled in scene
     void set_enabled(bool enabled, viper::Scene &scene) {
         for (auto i : radius_constraints)
@@ -87,7 +88,9 @@ class OctopusComponent : public Component {
     // 0 - normal
     // 1 - pillars
     // 2 - cannonballs
-    int scene_index = 1;
+    // 3 - explode from origin
+    // 4 - mine
+    int scene_index = 4;
 
     // what is active cannonball?
     bool cannonballs_active = false;
@@ -103,6 +106,10 @@ class OctopusComponent : public Component {
     SphereMeshRenderer *cannonball_renderer;
     WorldRenderComponent *pillar_render_comp;
     SphereMeshRenderer *pillar_renderer;
+
+    // tentacle
+    std::map<int,float> original_distances;
+    std::vector<std::vector<int>> tentacle_groups;
 
     // ids
     std::vector<std::vector<int>> v_ids, p_ids;
@@ -442,8 +449,7 @@ class OctopusComponent : public Component {
             mesh = tempmesh;
         }
 
-        // make an octopus from VIPER primitives
-        // TODO - where is this saved? where does the data come from?
+        // make an octopus from VIPER primitives as defined it Octopus.h
         cow::get_octopus(spheres, all_pills, control_pills, masses,
                          compliances);
 
@@ -594,6 +600,7 @@ class OctopusComponent : public Component {
 
 
         // allocate memory?
+        tentacle_groups.resize(3*n_cows);
         v_ids.resize(n_cows);
         p_ids.resize(n_cows);
         cannonball_ids.resize(n_cows);
@@ -638,10 +645,8 @@ class OctopusComponent : public Component {
                     viper::C_radius(v_ids[cow_id].back(), v[3], 1e-3));
 
                 // cannoball
-                // TODO - comment out? what changes
-                // if i in 10, ..., 17
+                // fixes cannonballs to tentacle at ids 10 - 17?
                 if (i >= 10 && i < 18) {
-                    // ???
                     data.cannonball_constraints.push_back(
                         v_scene->constraints.distance.size());
                     v_scene->constraints.distance.push_back(viper::C_distance(
@@ -662,17 +667,6 @@ class OctopusComponent : public Component {
                 // TODO - change this to activate muscle. Not sure where to change this dynamically though?
                 // rest distance - defaults to euclidean distance
                 float d = (spheres[pill[0]] - spheres[pill[1]]).norm();
-                // stretch out
-                // d *= 2;
-                // if (i%3 == 0) {
-                //     d *= 1;
-                // } else {
-                //     d *= .6;
-                // }
-
-                // if (i%3 == 1) {
-                //     d *= 1.5;
-                // }
 
                 // save volume constraints
                 data.volume_constraints.push_back(
@@ -692,9 +686,16 @@ class OctopusComponent : public Component {
                 // int c - pill id
                 // float L - rest length
                 // float compliance 
+                int index = v_scene->constraints.stretch.size();
+                if (original_distances.find(index) == original_distances.end()) {
+                    original_distances[index] = d;
+                }
                 v_scene->constraints.stretch.push_back(viper::C_stretch(
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));
+                if (index % 6 < 3){
+                    tentacle_groups[index % 6].push_back(index);
+                }
             }
             // compares every two possibilities of pills
             // for each pill index i in 0, 1, ..., all_pills.size()
@@ -815,6 +816,17 @@ class OctopusComponent : public Component {
             }
             break;
         }
+        case 4: {
+            cannonballs_active = false;
+            pillars_active = false;
+
+            // place each octopus randomly
+            for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
+                set_position(cow_id, Vec3::Random() * 10 + Vec3(0, .5, 0),
+                             Vec3::Zero());
+            }
+            break;
+        }
         }
 
         // make cannnons visible if bool
@@ -849,7 +861,12 @@ class OctopusComponent : public Component {
 
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
-    void update() {}
+    void update() {
+        fix(0, Vec3(0.0, 0.0, 0.0));
+        contract(0, 0.6);
+        contract(1, 0.6);
+        contract(2, 1.2);
+    }
 
     // intersection algorithm
     int intersect(Vec3 eye, Vec3 dir) {
@@ -966,14 +983,16 @@ class OctopusComponent : public Component {
         }
     }
 
-   // TODO - does this move around the octopus manually?
+   // set position and velocity for octopus
     void set_position(int i, Vec3 pos, Vec3 v) {
+        // for each sphere in octopus
         for (auto id : v_ids[i]) {
             v_scene->state.x[id] = v_scene->state.xi[id] + pos;
             v_scene->state.xp[id] = v_scene->state.x[id] - v;
             v_scene->state.r[id] = v_scene->state.ri[id];
             v_scene->state.rp[id] = v_scene->state.ri[id];
         }
+        // for each pill in octopus
         for (auto id : p_ids[i]) {
             v_scene->state.q[id] = v_scene->state.qi[id];
             v_scene->state.qp[id] = v_scene->state.qi[id];
@@ -985,6 +1004,27 @@ class OctopusComponent : public Component {
                 v_scene->state.xi[cannonball_ids[i]] + pos;
             v_scene->state.xp[cannonball_ids[i]] =
                 v_scene->state.x[cannonball_ids[i]] - v;
+        }
+    }
+
+    void contract(int group_id, float ratio) {
+        for (auto id: tentacle_groups[group_id]) {
+            // std::cout << id << ": " << original_distances[id] << std::endl;
+            v_scene->constraints.stretch[id].L = ratio * original_distances[id];
+        }
+    }
+
+
+    void fix(int i, Vec3 pos) {
+        int count = 0;
+        for (auto id : v_ids[i]) {
+            if (count < 1) {
+                v_scene->state.x[id] = pos;
+                v_scene->state.xp[id] = v_scene->state.x[id];
+                v_scene->state.r[id] = v_scene->state.ri[id];
+                v_scene->state.rp[id] = v_scene->state.ri[id];
+            }
+            count++;
         }
     }
 
