@@ -577,21 +577,26 @@ bool recentered = false;
 
 // app event listener
 unsigned i = 0;
+unsigned delay = 60;
 app.add_listener<ApplicationUpdateEvent>(
         [&](const ApplicationUpdateEvent &) {
             // // Make muscle's contract
+            octoswarm.update();
             i++;
-            // if (i >= 60 & (i-60) < sim_scene.constraints.stretch.size()) {
-            //     unsigned j = i - 60;
-            //     if (!(j%3 == 0) & j > 90){
-            //         sim_scene.constraints.stretch[i-60].L *= .5;
-            //     } else {
-            //         sim_scene.constraints.stretch[i-60].L *= 1.2;
-            //     }
-            // }
+            if (i >= delay) {
+                unsigned j = i - delay + 3;
+                if (j < sim_scene.constraints.stretch.size()){
+                    if (!(j%3 == 0)){
+                        sim_scene.constraints.stretch[j].L *= .5;
+                    } else {
+                        sim_scene.constraints.stretch[j].L *= 1.2;
+                    }
+                }
+            }
             
             // // move to origin
 
+            /*
             if (i < 60) {
                 int j = 51;
                 Vec3 p = sim_scene.state.x[j];
@@ -603,6 +608,7 @@ app.add_listener<ApplicationUpdateEvent>(
                 // // std::cout << sim_scene.state.xp[0]*10 << std::endl;
                 // std::cout << std::endl;
             }
+            */
             /*
             sim_scene.state.xa[k] = 0;
             sim_scene.state.x[k] = sim_scene.state.x[0] / 100000;
