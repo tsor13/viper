@@ -861,11 +861,26 @@ class OctopusComponent : public Component {
 
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
-    void update() {
+    void update(int t) {
         fix(0, Vec3(0.0, 0.0, 0.0));
-        contract(0, 0.6);
-        contract(1, 0.6);
-        contract(2, 1.2);
+        int delay = 180;
+        if (t == delay) {
+            contract(0, 0.6);
+            contract(1, 0.6);
+            contract(2, 1.2);
+        } else if (t == delay*2) {
+            contract(0, 1.2);
+            contract(1, 0.6);
+            contract(2, 0.6);
+        } else if (t == delay*3) {
+            contract(0, 0.6);
+            contract(1, 1.2);
+            contract(2, 0.6);
+        } else if (t == delay*4) {
+            contract(0, 1);
+            contract(1, 1);
+            contract(2, 1);
+        }
     }
 
     // intersection algorithm
@@ -1018,7 +1033,12 @@ class OctopusComponent : public Component {
     void fix(int i, Vec3 pos) {
         int count = 0;
         for (auto id : v_ids[i]) {
-            if (count < 1) {
+            if (count == 1) {
+                pos = pos + Vec3(0,0,5);
+            } else if (count == 2) {
+                pos = pos + Vec3(5,0,-5);
+            }
+            if (count < 3) {
                 v_scene->state.x[id] = pos;
                 v_scene->state.xp[id] = v_scene->state.x[id];
                 v_scene->state.r[id] = v_scene->state.ri[id];
