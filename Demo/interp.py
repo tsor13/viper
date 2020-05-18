@@ -1,10 +1,11 @@
 import os
 import numpy as np
+import pdb
 
 filename = 'Octopus.h'
 
 num_joints = 30
-scale = 1
+scale = .75
 inter_compliance = 1e-4
 other_compliance = 1e-4
 
@@ -130,6 +131,17 @@ with open(filename, 'w') as f:
     # write head
     f.write(head)
 
+    # write base
+    base_vector = np.mean(joints[0], axis=0)
+    f.write('\n        {')
+    f.write('"tentacle.base.1", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *base_vector))
+    f.write('},')
+    f.write('\n        {')
+    f.write('"tentacle.base.2", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,5,0,0]))))
+    f.write('},')
+    f.write('\n        {')
+    f.write('"tentacle.base.3", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,0,5,0]))))
+    f.write('},')
     # write Sphere vals
     for i in range(joints.shape[0]):
         for j in range(joints.shape[1]):
@@ -152,6 +164,15 @@ with open(filename, 'w') as f:
 
     # write masses
     f.write('\n    std::map<std::string, float> sphere_masses = {')
+    f.write('\n        {')
+    f.write('"tentacle.base.1", {:.3f}f'.format((scale*base_vector[-1])**2))
+    f.write('},')
+    f.write('\n        {')
+    f.write('"tentacle.base.2", {:.3f}f'.format((scale*base_vector[-1])**2))
+    f.write('},')
+    f.write('\n        {')
+    f.write('"tentacle.base.3", {:.3f}f'.format((scale*base_vector[-1])**2))
+    f.write('},')
     for i in range(joints.shape[0]):
         for j in range(joints.shape[1]):
             f.write('\n        {')
@@ -172,6 +193,12 @@ with open(filename, 'w') as f:
     f.write(mid)
 
     # write pill connections
+    # base to bottom connections
+    for i in range(3):
+        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.1"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.2"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.3"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+    f.write('\n')
     # level to level conections
     # 3n connections
     for i in range(joints.shape[0]):
