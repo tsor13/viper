@@ -5,10 +5,12 @@ import pdb
 filename = 'Octopus.h'
 
 num_joints = 30
-scale = .75
+scale = 1
+mass_scale = .25
 inter_compliance = 1e-4
 other_compliance = 1e-4
 
+draw_base = False
 draw_cube = False
 cube_radius = 1
 cube_center = np.array([4.0, 4.0, 4.0])
@@ -31,6 +33,8 @@ annotated = np.array([ [ [-23.8, -2.45, 1.28, 1.2],
                        [ [24, -.56, -.08, .2],
                          [24, -.56, -.31, .2],
                          [24, -.89, -.12, .2] ] ])
+
+annotated[:, :, [0,1]] = annotated[:, :, [1,0]]
 
 def interpolate(x):
     if x == 1:
@@ -132,16 +136,17 @@ with open(filename, 'w') as f:
     f.write(head)
 
     # write base
-    base_vector = np.mean(joints[0], axis=0)
-    f.write('\n        {')
-    f.write('"tentacle.base.1", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *base_vector))
-    f.write('},')
-    f.write('\n        {')
-    f.write('"tentacle.base.2", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,5,0,0]))))
-    f.write('},')
-    f.write('\n        {')
-    f.write('"tentacle.base.3", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,0,5,0]))))
-    f.write('},')
+    if draw_base:
+        base_vector = np.mean(joints[0], axis=0)
+        f.write('\n        {')
+        f.write('"tentacle.base.1", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *base_vector))
+        f.write('},')
+        f.write('\n        {')
+        f.write('"tentacle.base.2", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,5,0,0]))))
+        f.write('},')
+        f.write('\n        {')
+        f.write('"tentacle.base.3", {:.3f}*Vec4({:.3f}, {:.3f}, {:.3f}, {:.3f})'.format(scale, *(base_vector+np.array([0,0,5,0]))))
+        f.write('},')
     # write Sphere vals
     for i in range(joints.shape[0]):
         for j in range(joints.shape[1]):
@@ -164,15 +169,16 @@ with open(filename, 'w') as f:
 
     # write masses
     f.write('\n    std::map<std::string, float> sphere_masses = {')
-    f.write('\n        {')
-    f.write('"tentacle.base.1", {:.3f}f'.format((scale*base_vector[-1])**2))
-    f.write('},')
-    f.write('\n        {')
-    f.write('"tentacle.base.2", {:.3f}f'.format((scale*base_vector[-1])**2))
-    f.write('},')
-    f.write('\n        {')
-    f.write('"tentacle.base.3", {:.3f}f'.format((scale*base_vector[-1])**2))
-    f.write('},')
+    if draw_base:
+        f.write('\n        {')
+        f.write('"tentacle.base.1", {:.3f}f'.format((scale*weight_scale*base_vector[-1])**2))
+        f.write('},')
+        f.write('\n        {')
+        f.write('"tentacle.base.2", {:.3f}f'.format((scale*weight_scale*base_vector[-1])**2))
+        f.write('},')
+        f.write('\n        {')
+        f.write('"tentacle.base.3", {:.3f}f'.format((scale*base_vector[-1])**2))
+        f.write('},')
     for i in range(joints.shape[0]):
         for j in range(joints.shape[1]):
             f.write('\n        {')
@@ -194,11 +200,12 @@ with open(filename, 'w') as f:
 
     # write pill connections
     # base to bottom connections
-    for i in range(3):
-        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.1"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
-        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.2"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
-        f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.3"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
-    f.write('\n')
+    if draw_base:
+        for i in range(3):
+            f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.1"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+            f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.2"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+            f.write('\n        tuple(Vec2i(sphere_ids["tentacle.base.3"], sphere_ids["tentacle1.{}"]), false, {}f),'.format(i+1, 0.0))
+        f.write('\n')
     # level to level conections
     # 3n connections
     for i in range(joints.shape[0]):
