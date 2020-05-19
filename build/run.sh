@@ -3,4 +3,4 @@ rm out.mpg
 cmake ..
 make
 vglrun ./demo &
-timeout 25s ffmpeg -f x11grab -framerate 25 -video_size 1920x1080 -i :4 out.mpg &
+timeout 15s ffmpeg -f x11grab -framerate 25 -video_size 1920x1080 -i :4 out.mpg &
