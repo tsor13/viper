@@ -862,7 +862,7 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
-        fix(0, Vec3(0.0, 0.0, 0.0));
+        fix(Vec3(0.0, 0.0, 0.0));
         int delay = 240;
         float l1 = 1.8;
         float l2 = .3;
@@ -1032,7 +1032,7 @@ class OctopusComponent : public Component {
     }
 
 
-    void fix(int i, Vec3 pos) {
+    void fix(Vec3 pos) {
         int base1 = v_ids[0][0];
         int base2 = v_ids[0][1];
         int base3 = v_ids[0][2];
