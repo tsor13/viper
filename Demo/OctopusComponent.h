@@ -1,4 +1,4 @@
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Lcensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 // 
@@ -822,7 +822,7 @@ class OctopusComponent : public Component {
 
             // place each octopus randomly
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
-                set_position(cow_id, Vec3::Random() * 10 + Vec3(0, .5, 0),
+                set_position(cow_id, Vec3::Random() * 10 + Vec3(0, 24, 0),
                              Vec3::Zero());
             }
             break;
@@ -865,17 +865,17 @@ class OctopusComponent : public Component {
         fix(0, Vec3(0.0, 0.0, 0.0));
         int delay = 180;
         if (t == delay) {
-            contract(0, 0.6);
+            contract(0, 1.2);
             contract(1, 0.6);
             contract(2, 1.2);
         } else if (t == delay*2) {
             contract(0, 1.2);
-            contract(1, 0.6);
+            contract(1, 1.2);
             contract(2, 0.6);
         } else if (t == delay*3) {
             contract(0, 0.6);
             contract(1, 1.2);
-            contract(2, 0.6);
+            contract(2, 1.2);
         } else if (t == delay*4) {
             contract(0, 1);
             contract(1, 1);
@@ -1031,21 +1031,26 @@ class OctopusComponent : public Component {
 
 
     void fix(int i, Vec3 pos) {
-        int count = 0;
-        for (auto id : v_ids[i]) {
-            if (count == 1) {
-                pos = pos + Vec3(0,0,5);
-            } else if (count == 2) {
-                pos = pos + Vec3(5,0,-5);
-            }
-            if (count < 3) {
-                v_scene->state.x[id] = pos;
-                v_scene->state.xp[id] = v_scene->state.x[id];
-                v_scene->state.r[id] = v_scene->state.ri[id];
-                v_scene->state.rp[id] = v_scene->state.ri[id];
-            }
-            count++;
-        }
+        int base1 = v_ids[0][0];
+        int base2 = v_ids[0][1];
+        int base3 = v_ids[0][2];
+
+        v_scene->state.x[base1] = pos;
+        v_scene->state.xp[base1] = v_scene->state.x[base1];
+        v_scene->state.r[base1] = v_scene->state.ri[base1];
+        v_scene->state.rp[base1] = v_scene->state.ri[base1];
+
+        Vec3 displacement = v_scene->state.xi[base1] - v_scene->state.xi[base2];
+        v_scene->state.x[base2] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        v_scene->state.xp[base2] = v_scene->state.x[base2];
+        v_scene->state.r[base2] = v_scene->state.ri[base2];
+        v_scene->state.rp[base2] = v_scene->state.ri[base2];
+
+        displacement = v_scene->state.xi[base1] - v_scene->state.xi[base3];
+        v_scene->state.x[base3] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        v_scene->state.xp[base3] = v_scene->state.x[base3];
+        v_scene->state.r[base3] = v_scene->state.ri[base3];
+        v_scene->state.rp[base3] = v_scene->state.ri[base3];
     }
 
     // get_transforms, as called above
