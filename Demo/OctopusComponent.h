@@ -90,7 +90,9 @@ class OctopusComponent : public Component {
     // 2 - cannonballs
     // 3 - explode from origin
     // 4 - mine
-    int scene_index = 4;
+    int scene_index = 0;
+
+    int n_cube = 2;
 
     // what is active cannonball?
     bool cannonballs_active = false;
@@ -693,7 +695,8 @@ class OctopusComponent : public Component {
                 v_scene->constraints.stretch.push_back(viper::C_stretch(
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));
-                if (index % 6 >= 3){
+                int cube_edges = 12;
+                if (index % 6 >= 3 & index < 30 * 6 - 3){
                     tentacle_groups[index % 6 - 3].push_back(index);
                 }
             }
@@ -1033,9 +1036,10 @@ class OctopusComponent : public Component {
 
 
     void fix(Vec3 pos) {
-        int base1 = v_ids[0][0];
-        int base2 = v_ids[0][1];
-        int base3 = v_ids[0][2];
+        int start = n_cube * n_cube * n_cube;
+        int base1 = v_ids[0][start];
+        int base2 = v_ids[0][start+1];
+        int base3 = v_ids[0][start+2];
 
         v_scene->state.x[base1] = pos;
         v_scene->state.xp[base1] = v_scene->state.x[base1];
