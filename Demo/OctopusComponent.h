@@ -693,8 +693,8 @@ class OctopusComponent : public Component {
                 v_scene->constraints.stretch.push_back(viper::C_stretch(
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));
-                if (index % 6 < 3){
-                    tentacle_groups[index % 6].push_back(index);
+                if (index % 6 >= 3){
+                    tentacle_groups[index % 6 - 3].push_back(index);
                 }
             }
             // compares every two possibilities of pills
@@ -822,7 +822,7 @@ class OctopusComponent : public Component {
 
             // place each octopus randomly
             for (int cow_id = 0; cow_id < n_cows; ++cow_id) {
-                set_position(cow_id, Vec3::Random() * 10 + Vec3(0, 24, 0),
+                set_position(cow_id, Vec3(0, 12, 0),
                              Vec3::Zero());
             }
             break;
@@ -863,19 +863,21 @@ class OctopusComponent : public Component {
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
         fix(0, Vec3(0.0, 0.0, 0.0));
-        int delay = 180;
+        int delay = 240;
+        float l1 = 1.8;
+        float l2 = .3;
         if (t == delay) {
-            contract(0, 1.2);
-            contract(1, 0.6);
-            contract(2, 1.2);
+            contract(0, l1);
+            contract(1, l1);
+            contract(2, l2);
         } else if (t == delay*2) {
-            contract(0, 1.2);
-            contract(1, 1.2);
-            contract(2, 0.6);
+            contract(0, l1);
+            contract(1, l2);
+            contract(2, l1);
         } else if (t == delay*3) {
-            contract(0, 0.6);
-            contract(1, 1.2);
-            contract(2, 1.2);
+            contract(0, l2);
+            contract(1, l1);
+            contract(2, l1);
         } else if (t == delay*4) {
             contract(0, 1);
             contract(1, 1);

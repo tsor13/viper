@@ -407,9 +407,13 @@ c_entity.get<CameraComponent>().set_window(window);
 // c_entity.center = Vec3(-30, 1, -10);
 // c_entity.get<TransformComponent>().position = Vec3(-12, 1, 10);
 
+// WORKS FOR ZERO GRAV BIG TENTACLE
+// c_entity.center = Vec3(-50, 20, 40);
+// c_entity.get<TransformComponent>().position = Vec3(-20, -50, 20);
+
 // change this to move in opposite direction that you would think
 // increasing y moves further down
-c_entity.center = Vec3(-50, 20, 40);
+c_entity.center = Vec3(-35, 10, 30);
 // making z negative moes closer
 c_entity.get<TransformComponent>().position = Vec3(-20, -50, 20);
 

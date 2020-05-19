@@ -5,8 +5,8 @@ import pdb
 filename = 'Octopus.h'
 
 num_joints = 30
-scale = 1
-mass_scale = .25
+scale = .5
+mass_scale = .1
 inter_compliance = 1e-4
 other_compliance = 1e-4
 
