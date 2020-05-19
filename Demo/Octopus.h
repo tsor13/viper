@@ -141,6 +141,14 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         {"tentacle30.2", 0.500*Vec4(-0.560, 24.000, -0.310, 0.200)},
         {"tentacle30.3", 0.500*Vec4(-0.890, 24.000, -0.120, 0.200)},
 
+        {"cube1.1.1", 0.500*Vec4(3.500, 3.500, 3.500, 0.500)},
+        {"cube1.1.2", 0.500*Vec4(3.500, 3.500, 4.500, 0.500)},
+        {"cube1.2.1", 0.500*Vec4(3.500, 4.500, 3.500, 0.500)},
+        {"cube1.2.2", 0.500*Vec4(3.500, 4.500, 4.500, 0.500)},
+        {"cube2.1.1", 0.500*Vec4(4.500, 3.500, 3.500, 0.500)},
+        {"cube2.1.2", 0.500*Vec4(4.500, 3.500, 4.500, 0.500)},
+        {"cube2.2.1", 0.500*Vec4(4.500, 4.500, 3.500, 0.500)},
+        {"cube2.2.2", 0.500*Vec4(4.500, 4.500, 4.500, 0.500)},
     };
 
     std::map<std::string, float> sphere_masses = {
@@ -235,6 +243,14 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         {"tentacle30.2", 0.010f},
         {"tentacle30.3", 0.010f},
 
+        {"cube1.1.1", 0.016f},
+        {"cube1.1.2", 0.016f},
+        {"cube1.2.1", 0.016f},
+        {"cube1.2.2", 0.016f},
+        {"cube2.1.1", 0.016f},
+        {"cube2.1.2", 0.016f},
+        {"cube2.2.1", 0.016f},
+        {"cube2.2.2", 0.016f},
     };
     // make ids for each sphere
     std::map<std::string, int> sphere_ids;
@@ -487,6 +503,30 @@ inline void get_octopus(std::vector<Vec4> &spheres, std::vector<Vec2i> &pills,
         tuple(Vec2i(sphere_ids["tentacle30.1"], sphere_ids["tentacle30.3"]), true, 0.0001f),
         tuple(Vec2i(sphere_ids["tentacle30.2"], sphere_ids["tentacle30.3"]), true, 0.0001f),
 
+        tuple(Vec2i(sphere_ids["cube1.1.1"], sphere_ids["cube2.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.1.1"], sphere_ids["cube1.2.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.1.1"], sphere_ids["cube1.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.1.2"], sphere_ids["cube2.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.1.2"], sphere_ids["cube1.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.1.2"], sphere_ids["cube1.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.1"], sphere_ids["cube2.2.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.1"], sphere_ids["cube1.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.1"], sphere_ids["cube1.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.2"], sphere_ids["cube2.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.2"], sphere_ids["cube1.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube1.2.2"], sphere_ids["cube1.2.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.1"], sphere_ids["cube1.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.1"], sphere_ids["cube2.2.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.1"], sphere_ids["cube2.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.2"], sphere_ids["cube1.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.2"], sphere_ids["cube2.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.1.2"], sphere_ids["cube2.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.1"], sphere_ids["cube1.2.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.1"], sphere_ids["cube2.1.1"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.1"], sphere_ids["cube2.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.2"], sphere_ids["cube1.2.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.2"], sphere_ids["cube2.1.2"]), false, 0.0f),
+        tuple(Vec2i(sphere_ids["cube2.2.2"], sphere_ids["cube2.2.1"]), false, 0.0f),
     };
     // TODO - idk what is
     for (int i = 0; i < pill_flags.size(); ++i) {

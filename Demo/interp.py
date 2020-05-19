@@ -12,7 +12,7 @@ other_compliance = 1e-4
 
 draw_base = False
 draw_cube = True
-cube_radius = 1
+cube_radius = 3
 cube_center = np.array([4.0, 4.0, 4.0])
 cube_n = 2
 cube_component_radius = cube_radius / cube_n
@@ -231,15 +231,15 @@ with open(filename, 'w') as f:
                     for i2 in [i-1, i+1]:
                         if in_bounds(i2):
                             f.write('\n        ')
-                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i2+1, j+1, k+1))
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), false, 0.0f),'.format(i+1, j+1, k+1, i2+1, j+1, k+1))
                     for j2 in [j-1, j+1]:
                         if in_bounds(j2):
                             f.write('\n        ')
-                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j2+1, k+1))
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), false, 0.0f),'.format(i+1, j+1, k+1, i+1, j2+1, k+1))
                     for k2 in [k-1, k+1]:
                         if in_bounds(k2):
                             f.write('\n        ')
-                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), true, 0.0f),'.format(i+1, j+1, k+1, i+1, j+1, k2+1))
+                            f.write('tuple(Vec2i(sphere_ids["cube{}.{}.{}"], sphere_ids["cube{}.{}.{}"]), false, 0.0f),'.format(i+1, j+1, k+1, i+1, j+1, k2+1))
 
     f.write('\n    };\n')
     f.write(end)
