@@ -637,7 +637,12 @@ class OctopusComponent : public Component {
                 float w = 1.0 / masses[i];
                 v_ids[cow_id].push_back(
                     v_scene->addParticle(v.head<3>(), v[3], w));
-                v_scene->pInfo[v_ids[cow_id].back()].group = cow_id * 2;
+                // COLLISION GROUP IS SET HERE
+                int add = 0;
+                if (i < n_cube*n_cube*n_cube) {
+                    add = 1;
+                }
+                v_scene->pInfo[v_ids[cow_id].back()].group = cow_id * 2 + add;
 
                 // add radius constraints to OctopusData data
                 data.radius_constraints.push_back(
