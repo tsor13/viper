@@ -7,14 +7,14 @@ filename = 'Octopus.h'
 num_joints = 30
 scale = .5
 mass_scale = .1
-inter_compliance = 1e-4
-other_compliance = 1e-4
+inter_compliance = 1e-7
+other_compliance = 1e-7
 
 draw_base = False
 draw_cube = True
-cube_radius = 3
+cube_radius = 2
 cube_center = np.array([4.0, 4.0, 4.0])
-cube_n = 2
+cube_n = 3
 cube_component_radius = cube_radius / cube_n
 
 # tentacle depth, tentacle part, (x, y, z, r)

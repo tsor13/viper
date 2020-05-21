@@ -473,7 +473,7 @@ auto set_defaults = [&]() {
     octoswarm.sphere_render_comp->visible = show_pills;
     it_count = 10;
     // sim_scene.gravity_strength = 1.0;
-    sim_scene.gravity_strength = 2.1;
+    sim_scene.gravity_strength = 0.1;
     playback = 1.0;
 };
 
