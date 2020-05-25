@@ -14,6 +14,7 @@
 
 // include standard libraries
 #include <cfloat>
+#include <cstdlib>
 
 // Load OpenGP
 #include <OpenGP/GL/Components/TrackballComponent.h>
@@ -874,23 +875,26 @@ class OctopusComponent : public Component {
         int delay = 240;
         float l1 = 1.4;
         float l2 = 0.2;
-        if (t == delay) {
-            contract(0, l1);
-            contract(1, l1);
-            contract(2, l2);
-        } else if (t == delay*2) {
-            contract(0, l1);
-            contract(1, l2);
-            contract(2, l1);
-        } else if (t == delay*3) {
-            contract(0, l2);
-            contract(1, l1);
-            contract(2, l1);
-        } else if (t == delay*4) {
-            contract(0, 1);
-            contract(1, 1);
-            contract(2, 1);
+        if (t%delay == 0) { 
+            randomAction();
         }
+        // if (t == delay) {
+        //     contract(0, l1);
+        //     contract(1, l1);
+        //     contract(2, l2);
+        // } else if (t == delay*2) {
+        //     contract(0, l1);
+        //     contract(1, l2);
+        //     contract(2, l1);
+        // } else if (t == delay*3) {
+        //     contract(0, l2);
+        //     contract(1, l1);
+        //     contract(2, l1);
+        // } else if (t == delay*4) {
+        //     contract(0, 1);
+        //     contract(1, 1);
+        //     contract(2, 1);
+        // }
     }
 
     // intersection algorithm
@@ -1036,6 +1040,16 @@ class OctopusComponent : public Component {
         for (auto id: tentacle_groups[group_id]) {
             // std::cout << id << ": " << original_distances[id] << std::endl;
             v_scene->constraints.stretch[id].L = ratio * original_distances[id];
+        }
+    }
+
+    void randomAction(float min = .1, float max = 2){
+        for (int i = 0; i < 3; i++) {
+            for (auto id: tentacle_groups[i]) {
+                float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+                float ratio = r * max + (1-r) * min;
+                v_scene->constraints.stretch[id].L = ratio * original_distances[id];
+            }
         }
     }
 
