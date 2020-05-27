@@ -11,4 +11,5 @@ services:
     working_dir: /usr/viper
     volumes:
       - ~/git/viper:/usr/viper
+      - ~/dev/results:/usr/results
 
