@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  simulator:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+  
+    # Add a link to a container registry here
+    # image: gcr.gitlab.com/...
+    working_dir: /usr/viper
+    volumes:
+      - ~/git/viper:/usr/viper
+
