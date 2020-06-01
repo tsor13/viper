@@ -875,7 +875,10 @@ class OctopusComponent : public Component {
         int delay = 240;
         float l1 = 1.4;
         float l2 = 0.2;
-        if (t%delay == 0) { 
+        if (t%(delay*2) == 0) { 
+            envReset();
+        }
+        if (t%delay == 0) {
             randomAction();
         }
         // if (t == delay) {
@@ -1053,6 +1056,27 @@ class OctopusComponent : public Component {
         }
     }
 
+
+    void envReset() {
+        int start = n_cube * n_cube * n_cube;
+        // reset to iniital positions around pos
+        Vec3 pos = Vec3(0, 0, 0);
+        for (int i = 0; i < v_ids[0].size(); i++) { 
+            v_scene->state.x[i] = pos + v_scene->state.xi[start] - v_scene->state.xi[i];
+            // v_scene->state.x[i] = pos - v_scene->state.xi[start] + v_scene->state.xi[i];
+            // v_scene->state.x[i] = pos + v_scene->state.xi[i];
+            // v_scene->state.x[i] = pos;
+            v_scene->state.xp[i] = v_scene->state.x[i];
+            v_scene->state.r[i] = v_scene->state.ri[i];
+            v_scene->state.rp[i] = v_scene->state.ri[i];
+        }
+        // step 1 second
+        int seconds = 10;
+        for (int i = 0; i < seconds; i++) {
+            double sim_time = v_scene->step(1 * 60 / 60.f, 1 * 10, true);
+            fix(pos);
+        }
+    }
 
     void fix(Vec3 pos) {
         int start = n_cube * n_cube * n_cube;
