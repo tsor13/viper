@@ -1086,7 +1086,7 @@ class OctopusComponent : public Component {
         // random direction for initial velocity
         Vec3 randomVector = Vec3::Random() * .01;
         // cube displacement
-        Vec3 cube_displacement = (Vec3::Random() - 0.5) * 10;
+        Vec3 cube_displacement = Vec3::Random() * 10;
         // for each sphere
         for (int ind = 0; ind < v_ids[0].size(); ind++) { 
             // get id
