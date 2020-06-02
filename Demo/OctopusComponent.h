@@ -702,9 +702,12 @@ class OctopusComponent : public Component {
                     v_ids[cow_id][pill[0]], v_ids[cow_id][pill[1]], p_id, d,
                     compliance));
                 // int cube_edges = 12;
-                if (index % 6 >= 3 & index < 30 * 6 - 3){
-                    tentacle_groups[index % 6 - 3].push_back(index);
+                if (index % 6 < 3 & index < 30 * 6 - 3){
+                    tentacle_groups[index % 6].push_back(index);
                 }
+                // if (index % 6 >= 3 & index < 30 * 6 - 3){
+                //     tentacle_groups[index % 6 - 3].push_back(index);
+                // }
             }
             // compares every two possibilities of pills
             // for each pill index i in 0, 1, ..., all_pills.size()
@@ -871,16 +874,23 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
+        // fix tentacle edge to origin
         fix(Vec3(0.0, 0.0, 0.0));
-        int delay = 240;
+        int delay = 350;
+        // contraction lengths in relation to euclidean distance
         float l1 = 1.4;
         float l2 = 0.2;
-        if (t%(delay*2) == 0) { 
+        // reset the environment
+        if (t%(delay*5) == 0) { 
             envReset();
         }
+        // do a random action
         // if (t%delay == 0) {
         //     randomAction();
         // }
+        if (t%delay == 0) {
+            randomContract();
+        }
 
         // if (t == delay) {
         //     contract(0, l1);
@@ -1057,36 +1067,40 @@ class OctopusComponent : public Component {
         }
     }
 
+    void randomContract(float min = .1, float max = 2){
+        for (int i = 0; i < 3; i++) {
+            float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+            contract(i, r);
+            // for (auto id: tentacle_groups[i]) {
+            //     float ratio = r * max + (1-r) * min;
+            //     v_scene->constraints.stretch[id].L = ratio * original_distances[id];
+            // }
+        }
+    }
+
 
     void envReset() {
-        int start = v_ids[0][n_cube * n_cube * n_cube];
+        int base = v_ids[0][n_cube * n_cube * n_cube];
         // reset to iniital positions around pos
         Vec3 pos = Vec3(0, 0, 0);
-        // Vec3 pos = Vec3(0, 13, 0);
-        // v_scene->state.x[start] = pos;
-        Vec3 randomVector = Vec3::Random();
+        // random direction for initial velocity
+        Vec3 randomVector = Vec3::Random() * .01;
+        // for each sphere
         for (int ind = 0; ind < v_ids[0].size(); ind++) { 
+            // get id
             int i = v_ids[0][ind];
-            v_scene->state.x[i] = v_scene->state.xi[i] + pos;
-            // v_scene->state.x[i] = v_scene->state.xi[i] + pos + randomVector;
-            v_scene->state.x[i] = pos - v_scene->state.xi[start] + v_scene->state.xi[i];
-            // v_scene->state.x[i] = pos - v_scene->state.xi[start] + v_scene->state.xi[i];
-            // v_scene->state.x[i] = pos + v_scene->state.xi[i];
-            // v_scene->state.x[i] = pos;
+            // set position to relative position where base is at pos
+            v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
+            // if the index is for a tentacle, not the cube, change the previous slightly to induce an initial velocity
             if (ind > n_cube * n_cube * n_cube) {
                 v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
             } else {
                 v_scene->state.xp[i] = v_scene->state.x[i];
             }
+            // set rotations? to initial
             v_scene->state.r[i] = v_scene->state.ri[i];
             v_scene->state.rp[i] = v_scene->state.ri[i];
         }
-        // step 1 second
-        // int steps = 10;
-        // for (int i = 0; i < steps; i++) {
-        //     double sim_time = v_scene->step(1 * 10 / 60.f, 1 * 10, true);
-        //     fix(pos);
-        // }
     }
 
     void fix(Vec3 pos) {
@@ -1101,14 +1115,12 @@ class OctopusComponent : public Component {
         v_scene->state.rp[base1] = v_scene->state.ri[base1];
 
         Vec3 displacement = v_scene->state.xi[base1] - v_scene->state.xi[base2];
-        // v_scene->state.x[base2] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.x[base2] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.xp[base2] = v_scene->state.x[base2];
         v_scene->state.r[base2] = v_scene->state.ri[base2];
         v_scene->state.rp[base2] = v_scene->state.ri[base2];
 
         displacement = v_scene->state.xi[base1] - v_scene->state.xi[base3];
-        // v_scene->state.x[base3] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.x[base3] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.xp[base3] = v_scene->state.x[base3];
         v_scene->state.r[base3] = v_scene->state.ri[base3];
