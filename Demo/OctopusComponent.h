@@ -878,9 +878,10 @@ class OctopusComponent : public Component {
         if (t%(delay*2) == 0) { 
             envReset();
         }
-        if (t%delay == 0) {
-            randomAction();
-        }
+        // if (t%delay == 0) {
+        //     randomAction();
+        // }
+
         // if (t == delay) {
         //     contract(0, l1);
         //     contract(1, l1);
@@ -1058,24 +1059,34 @@ class OctopusComponent : public Component {
 
 
     void envReset() {
-        int start = n_cube * n_cube * n_cube;
+        int start = v_ids[0][n_cube * n_cube * n_cube];
         // reset to iniital positions around pos
         Vec3 pos = Vec3(0, 0, 0);
-        for (int i = 0; i < v_ids[0].size(); i++) { 
-            v_scene->state.x[i] = pos + v_scene->state.xi[start] - v_scene->state.xi[i];
+        // Vec3 pos = Vec3(0, 13, 0);
+        // v_scene->state.x[start] = pos;
+        Vec3 randomVector = Vec3::Random();
+        for (int ind = 0; ind < v_ids[0].size(); ind++) { 
+            int i = v_ids[0][ind];
+            v_scene->state.x[i] = v_scene->state.xi[i] + pos;
+            // v_scene->state.x[i] = v_scene->state.xi[i] + pos + randomVector;
+            v_scene->state.x[i] = pos - v_scene->state.xi[start] + v_scene->state.xi[i];
             // v_scene->state.x[i] = pos - v_scene->state.xi[start] + v_scene->state.xi[i];
             // v_scene->state.x[i] = pos + v_scene->state.xi[i];
             // v_scene->state.x[i] = pos;
-            v_scene->state.xp[i] = v_scene->state.x[i];
+            if (ind > n_cube * n_cube * n_cube) {
+                v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
+            } else {
+                v_scene->state.xp[i] = v_scene->state.x[i];
+            }
             v_scene->state.r[i] = v_scene->state.ri[i];
             v_scene->state.rp[i] = v_scene->state.ri[i];
         }
         // step 1 second
-        int seconds = 10;
-        for (int i = 0; i < seconds; i++) {
-            double sim_time = v_scene->step(1 * 60 / 60.f, 1 * 10, true);
-            fix(pos);
-        }
+        // int steps = 10;
+        // for (int i = 0; i < steps; i++) {
+        //     double sim_time = v_scene->step(1 * 10 / 60.f, 1 * 10, true);
+        //     fix(pos);
+        // }
     }
 
     void fix(Vec3 pos) {
@@ -1090,13 +1101,15 @@ class OctopusComponent : public Component {
         v_scene->state.rp[base1] = v_scene->state.ri[base1];
 
         Vec3 displacement = v_scene->state.xi[base1] - v_scene->state.xi[base2];
-        v_scene->state.x[base2] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        // v_scene->state.x[base2] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        v_scene->state.x[base2] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.xp[base2] = v_scene->state.x[base2];
         v_scene->state.r[base2] = v_scene->state.ri[base2];
         v_scene->state.rp[base2] = v_scene->state.ri[base2];
 
         displacement = v_scene->state.xi[base1] - v_scene->state.xi[base3];
-        v_scene->state.x[base3] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        // v_scene->state.x[base3] = pos + Vec3(displacement.x(), displacement.y(), displacement.z());
+        v_scene->state.x[base3] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
         v_scene->state.xp[base3] = v_scene->state.x[base3];
         v_scene->state.r[base3] = v_scene->state.ri[base3];
         v_scene->state.rp[base3] = v_scene->state.ri[base3];
