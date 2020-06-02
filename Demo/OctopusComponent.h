@@ -881,7 +881,7 @@ class OctopusComponent : public Component {
         float l1 = 1.4;
         float l2 = 0.2;
         // reset the environment
-        if (t%(delay*5) == 0) { 
+        if (t%(delay*1) == 0) { 
             envReset();
         }
         // do a random action
@@ -1085,17 +1085,23 @@ class OctopusComponent : public Component {
         Vec3 pos = Vec3(0, 0, 0);
         // random direction for initial velocity
         Vec3 randomVector = Vec3::Random() * .01;
+        // cube displacement
+        Vec3 cube_displacement = (Vec3::Random() - 0.5) * 10;
         // for each sphere
         for (int ind = 0; ind < v_ids[0].size(); ind++) { 
             // get id
             int i = v_ids[0][ind];
-            // set position to relative position where base is at pos
-            v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
-            // if the index is for a tentacle, not the cube, change the previous slightly to induce an initial velocity
+            // if the index is for a tentacle
             if (ind > n_cube * n_cube * n_cube) {
+                // set position to relative position where base is at pos
+                v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
+                //  change the previous slightly to induce an initial velocity
                 v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
+            // if the index is for a cube
             } else {
-                v_scene->state.xp[i] = v_scene->state.x[i];
+                v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i] + cube_displacement;
+                //  change the previous slightly to induce an initial velocity
+                v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
             }
             // set rotations? to initial
             v_scene->state.r[i] = v_scene->state.ri[i];

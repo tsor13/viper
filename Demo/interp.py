@@ -13,7 +13,8 @@ other_compliance = 1e-7
 draw_base = False
 draw_cube = True
 cube_radius = 2
-cube_center = np.array([4.0, 4.0, 4.0])
+# cube_center = np.array([8.0, 8.0, 8.0])
+cube_center = np.array([0, 0, 0])
 cube_n = 3
 cube_component_radius = cube_radius / cube_n
 
