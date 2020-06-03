@@ -15,6 +15,8 @@
 // include standard libraries
 #include <cfloat>
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
 
 // Load OpenGP
 #include <OpenGP/GL/Components/TrackballComponent.h>
@@ -37,6 +39,7 @@
 #define VIPER_GREY 1
 #define VIPER_GOLD 2
 #define VIPER_CLEAR_RED 3
+
 
 // make new namespace
 namespace OpenGP {
@@ -139,8 +142,11 @@ class OctopusComponent : public Component {
     // I believe for moving the camera around
     std::vector<std::vector<Mat4x4>> init_transforms;
 
-    // since we're using Vertex a lot, I assum
+    // since we're using Vertex a lot, I assume
     using V = OpenGP::SphereMesh::Vertex;
+
+    // output file
+    std::ofstream file;
 
     // initialize
     void init() {
@@ -887,6 +893,21 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
+        auto s = getState();
+        if (t == 5) {
+            file.open("output.txt");
+            file << s.size() << std::endl;
+            file.close();
+            // std::cout << std::endl << file.is_open() << std::endl;;
+            // file.open("test.txt", std::ios::app);
+            // std::cout << std::endl << file.is_open() << std::endl;;
+            // auto s = getState();
+            // file << "test\ntest2\n" << std::endl;;
+            // file << "PLEASE WORK" << std::endl;;
+            // file.close();
+            // std::cout << std::endl << file.is_open() << std::endl;;
+        }
+        // file.close();
         // fix tentacle edge to origin
         fix(Vec3(0.0, 0.0, 0.0));
         int delay = 350;
@@ -901,9 +922,10 @@ class OctopusComponent : public Component {
         // if (t%delay == 0) {
         //     randomAction();
         // }
-        if (t%delay == 0) {
-            randomContract();
-        }
+        // if (t%delay == 0) {
+        //     randomContract();
+        // }
+        auto action = randomContract();
 
         // if (t == delay) {
         //     contract(0, l1);
@@ -1063,6 +1085,55 @@ class OctopusComponent : public Component {
         }
     }
 
+    std::vector<float> getState() {
+        file.close();
+        std::vector<float> state;
+        for (int ind = 0; ind < tentacle_ids.size(); ind++) { 
+            // get id
+            int i = tentacle_ids[ind];
+
+            // add information to state vector
+            Vec3 x = v_scene->state.x[i];
+            state.push_back(x.x());
+            state.push_back(x.y());
+            state.push_back(x.z());
+            Vec3 xp = v_scene->state.xp[i];
+            state.push_back(xp.x());
+            state.push_back(xp.y());
+            state.push_back(xp.z());
+            float r = v_scene->state.r[i];
+            state.push_back(r);
+            float rp = v_scene->state.rp[i];
+            state.push_back(rp);
+        }
+        for (int ind = 0; ind < cube_ids.size(); ind++) { 
+            // get id
+            int i = cube_ids[ind];
+
+            // add information to state vector
+            Vec3 x = v_scene->state.x[i];
+            state.push_back(x.x());
+            state.push_back(x.y());
+            state.push_back(x.z());
+            Vec3 xp = v_scene->state.xp[i];
+            state.push_back(xp.x());
+            state.push_back(xp.y());
+            state.push_back(xp.z());
+            float r = v_scene->state.r[i];
+            state.push_back(r);
+            float rp = v_scene->state.rp[i];
+            state.push_back(rp);
+        }
+        return state;
+    }
+
+    void takeAction(std::vector<float> action) {
+        // for now, takes a vector of length 3, one for each tentacle arm
+        contract(0, action[0]);
+        contract(1, action[1]);
+        contract(2, action[3]);
+    }
+
     void contract(int group_id, float ratio) {
         for (auto id: tentacle_groups[group_id]) {
             // std::cout << id << ": " << original_distances[id] << std::endl;
@@ -1080,15 +1151,14 @@ class OctopusComponent : public Component {
         }
     }
 
-    void randomContract(float min = .1, float max = 2){
+    std::vector<float> randomContract(float min = .1, float max = 2){
+        std::vector<float> action;
         for (int i = 0; i < 3; i++) {
             float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
             contract(i, r);
-            // for (auto id: tentacle_groups[i]) {
-            //     float ratio = r * max + (1-r) * min;
-            //     v_scene->constraints.stretch[id].L = ratio * original_distances[id];
-            // }
+            action.push_back(r);
         }
+        return action;
     }
 
 
@@ -1122,25 +1192,6 @@ class OctopusComponent : public Component {
             v_scene->state.r[i] = v_scene->state.ri[i];
             v_scene->state.rp[i] = v_scene->state.ri[i];
         }
-        // for (int ind = 0; ind < v_ids[0].size(); ind++) { 
-        //     // get id
-        //     int i = v_ids[0][ind];
-        //     // if the index is for a tentacle
-        //     if (ind > n_cube * n_cube * n_cube) {
-        //         // set position to relative position where base is at pos
-        //         v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
-        //         //  change the previous slightly to induce an initial velocity
-        //         v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
-        //     // if the index is for a cube
-        //     } else {
-        //         v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i] + cube_displacement;
-        //         //  change the previous slightly to induce an initial velocity
-        //         v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
-        //     }
-        //     // set rotations? to initial
-        //     v_scene->state.r[i] = v_scene->state.ri[i];
-        //     v_scene->state.rp[i] = v_scene->state.ri[i];
-        // }
     }
 
     void fix(Vec3 pos) {
