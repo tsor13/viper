@@ -894,7 +894,7 @@ class OctopusComponent : public Component {
         float l1 = 1.4;
         float l2 = 0.2;
         // reset the environment
-        if (t%(delay*1) == 0) { 
+        if (t%(delay*4) == 0) { 
             envReset();
         }
         // do a random action
