@@ -894,20 +894,15 @@ class OctopusComponent : public Component {
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
         auto s = getState();
-        if (t == 5) {
-            file.open("output.txt");
-            file << s.size() << std::endl;
+        if (t < 60) {
+            file.open("output.txt", std::ios::app);
+            for (float f : s) {
+                file << f << " ";
+            }
+            file << "\n";
+            // file << "\n";
             file.close();
-            // std::cout << std::endl << file.is_open() << std::endl;;
-            // file.open("test.txt", std::ios::app);
-            // std::cout << std::endl << file.is_open() << std::endl;;
-            // auto s = getState();
-            // file << "test\ntest2\n" << std::endl;;
-            // file << "PLEASE WORK" << std::endl;;
-            // file.close();
-            // std::cout << std::endl << file.is_open() << std::endl;;
         }
-        // file.close();
         // fix tentacle edge to origin
         fix(Vec3(0.0, 0.0, 0.0));
         int delay = 350;
