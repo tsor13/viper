@@ -917,8 +917,13 @@ class OctopusComponent : public Component {
         auto action = randomContract();
 
         auto s = getState();
-        if (t < delay * 4 * 10) {
-            std::string filename = "output" + std::to_string(resetCount) + ".txt";
+        if (t < delay * 4 * 1000) {
+            std::string filename;
+            if (resetCount%10 < 7) {
+                filename = "output" + std::to_string(resetCount) + ".txt";
+            } else {
+                filename = "test" + std::to_string(resetCount) + ".txt";
+            }
             file.open(filename, std::ios::app);
             for (float f : s) {
                 file << f << " ";
