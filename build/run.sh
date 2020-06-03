@@ -1,6 +1,6 @@
 export DISPLAY=:4
 rm out.mpg
-rm output.txt
+rm output*
 cmake ..
 make
 vglrun ./demo &

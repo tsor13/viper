@@ -148,6 +148,9 @@ class OctopusComponent : public Component {
     // output file
     std::ofstream file;
 
+    // reset count
+    int resetCount = 0;
+
     // initialize
     void init() {
         render_comp = &(require<WorldRenderComponent>());
@@ -893,16 +896,6 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
-        auto s = getState();
-        if (t < 60) {
-            file.open("output.txt", std::ios::app);
-            for (float f : s) {
-                file << f << " ";
-            }
-            file << "\n";
-            // file << "\n";
-            file.close();
-        }
         // fix tentacle edge to origin
         fix(Vec3(0.0, 0.0, 0.0));
         int delay = 350;
@@ -912,6 +905,7 @@ class OctopusComponent : public Component {
         // reset the environment
         if (t%(delay*4) == 0) { 
             envReset();
+            resetCount++;
         }
         // do a random action
         // if (t%delay == 0) {
@@ -921,6 +915,21 @@ class OctopusComponent : public Component {
         //     randomContract();
         // }
         auto action = randomContract();
+
+        auto s = getState();
+        if (t < delay * 4 * 10) {
+            std::string filename = "output" + std::to_string(resetCount) + ".txt";
+            file.open(filename, std::ios::app);
+            for (float f : s) {
+                file << f << " ";
+            }
+            for (float f : action) {
+                file << f << " ";
+            }
+            file << "\n";
+            // file << "\n";
+            file.close();
+        }
 
         // if (t == delay) {
         //     contract(0, l1);
