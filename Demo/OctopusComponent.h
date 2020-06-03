@@ -116,6 +116,8 @@ class OctopusComponent : public Component {
 
     // ids
     std::vector<std::vector<int>> v_ids, p_ids;
+    std::vector<int> cube_ids;
+    std::vector<int> tentacle_ids;
     std::vector<int> cannonball_ids;
     std::vector<int> pillar_ids;
     // vector of OctopusData struct
@@ -662,6 +664,17 @@ class OctopusComponent : public Component {
                         cannonball_s[3], 0.f));
                 }
             }
+            for (int ind = 0; ind < v_ids[0].size(); ind++) { 
+                // get id
+                int i = v_ids[0][ind];
+                // if the index is for a tentacle
+                if (ind > n_cube * n_cube * n_cube) {
+                    tentacle_ids.push_back(i);
+                // if the index is for a cube
+                } else {
+                    cube_ids.push_back(i);
+                }
+            }
 
             // for each pill
             for (int i = 0; i < all_pills.size(); i++) {
@@ -1088,25 +1101,46 @@ class OctopusComponent : public Component {
         // cube displacement
         Vec3 cube_displacement = Vec3::Random() * 10;
         // for each sphere
-        for (int ind = 0; ind < v_ids[0].size(); ind++) { 
+        for (int ind = 0; ind < tentacle_ids.size(); ind++) { 
             // get id
-            int i = v_ids[0][ind];
-            // if the index is for a tentacle
-            if (ind > n_cube * n_cube * n_cube) {
-                // set position to relative position where base is at pos
-                v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
-                //  change the previous slightly to induce an initial velocity
-                v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
-            // if the index is for a cube
-            } else {
-                v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i] + cube_displacement;
-                //  change the previous slightly to induce an initial velocity
-                v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
-            }
+            int i = tentacle_ids[ind];
+            // set position to relative position where base is at pos
+            v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
+            //  change the previous slightly to induce an initial velocity
+            v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
             // set rotations? to initial
             v_scene->state.r[i] = v_scene->state.ri[i];
             v_scene->state.rp[i] = v_scene->state.ri[i];
         }
+        for (int ind = 0; ind < cube_ids.size(); ind++) { 
+            // get id
+            int i = cube_ids[ind];
+            v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i] + cube_displacement;
+            //  change the previous slightly to induce an initial velocity
+            v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
+            // set rotations? to initial
+            v_scene->state.r[i] = v_scene->state.ri[i];
+            v_scene->state.rp[i] = v_scene->state.ri[i];
+        }
+        // for (int ind = 0; ind < v_ids[0].size(); ind++) { 
+        //     // get id
+        //     int i = v_ids[0][ind];
+        //     // if the index is for a tentacle
+        //     if (ind > n_cube * n_cube * n_cube) {
+        //         // set position to relative position where base is at pos
+        //         v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i];
+        //         //  change the previous slightly to induce an initial velocity
+        //         v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
+        //     // if the index is for a cube
+        //     } else {
+        //         v_scene->state.x[i] = pos - v_scene->state.xi[base] + v_scene->state.xi[i] + cube_displacement;
+        //         //  change the previous slightly to induce an initial velocity
+        //         v_scene->state.xp[i] = v_scene->state.x[i] + randomVector;
+        //     }
+        //     // set rotations? to initial
+        //     v_scene->state.r[i] = v_scene->state.ri[i];
+        //     v_scene->state.rp[i] = v_scene->state.ri[i];
+        // }
     }
 
     void fix(Vec3 pos) {
