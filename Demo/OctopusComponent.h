@@ -150,6 +150,7 @@ class OctopusComponent : public Component {
 
     // reset count
     int resetCount = 0;
+    std::vector<float> lastAction;
 
     // initialize
     void init() {
@@ -899,9 +900,10 @@ class OctopusComponent : public Component {
         // fix tentacle edge to origin
         fix(Vec3(0.0, 0.0, 0.0));
         int delay = 350;
+        int repeatAction = 50;
         // contraction lengths in relation to euclidean distance
-        float l1 = 1.4;
-        float l2 = 0.2;
+        // float l1 = 1.4;
+        // float l2 = 0.2;
         // reset the environment
         if (t%(delay*4) == 0) { 
             envReset();
@@ -914,9 +916,12 @@ class OctopusComponent : public Component {
         // if (t%delay == 0) {
         //     randomContract();
         // }
-        auto action = randomContract();
-
+        if (t%repeatAction == 0) {
+            auto action = randomContract();
+            lastAction = action;
+        }
         auto s = getState();
+
         if (t < delay * 4 * 1000) {
             std::string filename;
             if (resetCount%10 < 7) {
@@ -928,7 +933,7 @@ class OctopusComponent : public Component {
             for (float f : s) {
                 file << f << " ";
             }
-            for (float f : action) {
+            for (float f : lastAction) {
                 file << f << " ";
             }
             file << "\n";
@@ -1110,10 +1115,16 @@ class OctopusComponent : public Component {
             state.push_back(xp.x());
             state.push_back(xp.y());
             state.push_back(xp.z());
+            Vec3 d = x - xp;
+            state.push_back(d.x());
+            state.push_back(d.y());
+            state.push_back(d.z());
             float r = v_scene->state.r[i];
             state.push_back(r);
             float rp = v_scene->state.rp[i];
             state.push_back(rp);
+            float rd = r - rp;
+            state.push_back(rd);
         }
         for (int ind = 0; ind < cube_ids.size(); ind++) { 
             // get id
@@ -1128,10 +1139,16 @@ class OctopusComponent : public Component {
             state.push_back(xp.x());
             state.push_back(xp.y());
             state.push_back(xp.z());
+            Vec3 d = x - xp;
+            state.push_back(d.x());
+            state.push_back(d.y());
+            state.push_back(d.z());
             float r = v_scene->state.r[i];
             state.push_back(r);
             float rp = v_scene->state.rp[i];
             state.push_back(rp);
+            float rd = r - rp;
+            state.push_back(rd);
         }
         return state;
     }
@@ -1162,11 +1179,24 @@ class OctopusComponent : public Component {
 
     std::vector<float> randomContract(float min = .1, float max = 2){
         std::vector<float> action;
-        for (int i = 0; i < 3; i++) {
-            float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-            contract(i, r);
-            action.push_back(r);
-        }
+        float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        // map to desired range
+        r1 = r1 * min + (1-r1) * max;
+        r2 = r2 * min + (1-r2) * max;
+        r3 = r3 * min + (1-r3) * max;
+        // normalize
+        r1 *= 1 / (r1 + r2 + r3);
+        r2 *= 1 / (r1 + r2 + r3);
+        r3 *= 1 / (r1 + r2 + r3);
+        // contract and save action
+        contract(0, r1);
+        action.push_back(r1);
+        contract(1, r2);
+        action.push_back(r2);
+        contract(2, r3);
+        action.push_back(r3);
         return action;
     }
 
