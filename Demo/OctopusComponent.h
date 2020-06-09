@@ -801,17 +801,27 @@ class OctopusComponent : public Component {
 
         std::ifstream infile("output1.txt", std::ios::binary);
         std::string line;
-        int i = 0;
-        while (std::getline(infile, line)) {
+        // int i = 0;
+        // while (std::getline(infile, line)) {
+        //     std::istringstream iss(line);
+        //     float f;
+        //     while (iss >> f) {
+        //         states[i].push_back(f);
+        //     }
+        //     i++;
+        //     std::cout << i << std::endl;
+        // }
+        for (int i = 0; i < 1400; i++){
+            std::getline(infile, line);
             std::istringstream iss(line);
             float f;
             while (iss >> f) {
                 states[i].push_back(f);
             }
-            i++;
         }
 
         reset();
+        envReset();
     }
 
     void reset() {
@@ -915,67 +925,6 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
-        // fix tentacle edge to origin
-        fix(Vec3(0.0, 0.0, 0.0));
-        int delay = 350;
-        int repeatAction = 50;
-        // contraction lengths in relation to euclidean distance
-        // float l1 = 1.4;
-        // float l2 = 0.2;
-        // reset the environment
-        if (t%(delay*4) == 0) { 
-            envReset();
-            resetCount++;
-        }
-        // do a random action
-        // if (t%delay == 0) {
-        //     randomAction();
-        // }
-        // if (t%delay == 0) {
-        //     randomContract();
-        // }
-        if (t%repeatAction == 0) {
-            auto action = randomContract();
-            lastAction = action;
-        }
-        auto s = getState();
-
-        if (t < delay * 4 * 1000) {
-            std::string filename;
-            if (resetCount%10 < 7) {
-                filename = "output" + std::to_string(resetCount) + ".txt";
-            } else {
-                filename = "test" + std::to_string(resetCount) + ".txt";
-            }
-            file.open(filename, std::ios::app);
-            for (float f : s) {
-                file << f << " ";
-            }
-            for (float f : lastAction) {
-                file << f << " ";
-            }
-            file << "\n";
-            // file << "\n";
-            file.close();
-        }
-
-        // if (t == delay) {
-        //     contract(0, l1);
-        //     contract(1, l1);
-        //     contract(2, l2);
-        // } else if (t == delay*2) {
-        //     contract(0, l1);
-        //     contract(1, l2);
-        //     contract(2, l1);
-        // } else if (t == delay*3) {
-        //     contract(0, l2);
-        //     contract(1, l1);
-        //     contract(2, l1);
-        // } else if (t == delay*4) {
-        //     contract(0, 1);
-        //     contract(1, 1);
-        //     contract(2, 1);
-        // }
     }
 
     // intersection algorithm
