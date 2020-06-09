@@ -151,6 +151,7 @@ class OctopusComponent : public Component {
     // reset count
     int resetCount = 0;
     std::vector<float> lastAction;
+    int simulation_length = 1400;
 
     // states
     std::vector<std::vector<float>> states;
@@ -797,7 +798,7 @@ class OctopusComponent : public Component {
         }
 
 
-        states.resize(1400);
+        states.resize(simulation_length);
 
         std::ifstream infile("output1.txt", std::ios::binary);
         std::string line;
@@ -811,7 +812,7 @@ class OctopusComponent : public Component {
         //     i++;
         //     std::cout << i << std::endl;
         // }
-        for (int i = 0; i < 1400; i++){
+        for (int i = 0; i < simulation_length; i++){
             std::getline(infile, line);
             std::istringstream iss(line);
             float f;
@@ -925,6 +926,31 @@ class OctopusComponent : public Component {
     // nothing on update?
     // TODO - change constraints here? to contract muscles?
     void update(int t) {
+        if (t < simulation_length) {
+            setState(t);
+        }
+    }
+
+    void setState(int t) {
+        auto state = states[t];
+        for (int ind = 0; ind < tentacle_ids.size(); ind++) { 
+            // get id
+            int i = tentacle_ids[ind];
+            int si = 12 * ind;
+            v_scene->state.x[i] = Vec3(state[si], state[si+1], state[si+2]);
+            v_scene->state.xp[i] = Vec3(state[si+3], state[si+4], state[si+5]);
+            v_scene->state.r[i] = state[si+9];
+            v_scene->state.rp[i] = state[si+10];
+        }
+        for (int ind = 0; ind < cube_ids.size(); ind++) { 
+            // get id
+            int i = cube_ids[ind];
+            int si = 12 * ind + tentacle_ids.size()*12;
+            v_scene->state.x[i] = Vec3(state[si], state[si+1], state[si+2]);
+            v_scene->state.xp[i] = Vec3(state[si+3], state[si+4], state[si+5]);
+            v_scene->state.r[i] = state[si+9];
+            v_scene->state.rp[i] = state[si+10];
+        }
     }
 
     // intersection algorithm
