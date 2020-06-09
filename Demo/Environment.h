@@ -2,10 +2,12 @@
 
 #include <cfloat>
 #include <cstdlib>
-#include <ctime>
+// #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <stdlib.h>
+#include <time.h>
 #include <Eigen/Dense>
 
 // #define TINYOBJLOADER_IMPLEMENTATION
@@ -66,7 +68,11 @@ class Environment {
         // make an object from VIPER primitives as defined in Octopus.h
         cow::get_octopus(spheres, all_pills, control_pills, masses, compliances);
 
+        // allocate memory
         tentacle_groups.resize(3);
+
+        // set random seed
+        srand(time(NULL));
 
         // populate viper scene
         // add spheres
@@ -154,12 +160,11 @@ class Environment {
 
         std::ofstream file;
 
-        for (int i = 0; i < 10000; i++){ 
+        for (int i = 0; i < 1000 * reset_delay; i++){ 
             scene.step(playback / 60.f, it_count, true);
             // running_framerate = .9 * running_framerate + .1 / simtime;
             fix(Vec3(0.0, 0.0, 0.0));
             if (i%reset_delay == 0) {
-                std::cout << resetCount << std::endl;
                 envReset();
                 resetCount++;
             }
@@ -171,9 +176,9 @@ class Environment {
 
             std::string filename;
             if (resetCount%10 < 7) {
-                filename = "output" + std::to_string(resetCount) + ".txt";
+                filename = "data/output" + std::to_string(resetCount) + ".txt";
             } else {
-                filename = "test" + std::to_string(resetCount) + ".txt";
+                filename = "data/test" + std::to_string(resetCount) + ".txt";
             }
             file.open(filename, std::ios::app);
             for (float f : s) {
@@ -255,6 +260,10 @@ class Environment {
         r1 = r1 * min + (1-r1) * max;
         r2 = r2 * min + (1-r2) * max;
         r3 = r3 * min + (1-r3) * max;
+        // normalize
+        r1 *= 3 / (r1 + r2 + r3);
+        r2 *= 3 / (r1 + r2 + r3);
+        r3 *= 3 / (r1 + r2 + r3);
         // contract and save action
         contract(0, r1);
         action.push_back(r1);
@@ -318,5 +327,13 @@ class Environment {
         scene.state.xp[base3] = scene.state.x[base3];
         scene.state.r[base3] = scene.state.ri[base3];
         scene.state.rp[base3] = scene.state.ri[base3];
+    }
+
+    std::vector<float> tick(float r1, float r2, float r3) {
+        contract(0, r1);
+        contract(1, r2);
+        contract(2, r3);
+        scene.step(playback / 60.f, it_count, true);
+        return getState();
     }
 };
