@@ -152,6 +152,9 @@ class OctopusComponent : public Component {
     int resetCount = 0;
     std::vector<float> lastAction;
 
+    // states
+    std::vector<std::vector<float>> states;
+
     // initialize
     void init() {
         render_comp = &(require<WorldRenderComponent>());
@@ -791,6 +794,21 @@ class OctopusComponent : public Component {
             }
             // increase offset by size of spheres
             offset += spheres.size();
+        }
+
+
+        states.resize(1400);
+
+        std::ifstream infile("output1.txt", std::ios::binary);
+        std::string line;
+        int i = 0;
+        while (std::getline(infile, line)) {
+            std::istringstream iss(line);
+            float f;
+            while (iss >> f) {
+                states[i].push_back(f);
+            }
+            i++;
         }
 
         reset();
