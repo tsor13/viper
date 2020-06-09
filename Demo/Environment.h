@@ -39,10 +39,6 @@ class Environment {
         // double frametime = 0;
         // double sim_frametime = 0;
 
-        // playback variables
-        float playback = 1.0;
-        int it_count = 10;
-
         // tentacle
         std::map<int,float> original_distances;
         std::vector<std::vector<int>> tentacle_groups;
@@ -61,10 +57,16 @@ class Environment {
 
         // cube size
         int n_cube = 3;
+
+        // playback variables
+        float playback = 1.0;
+        int it_count = 10;
+
     void init() {
-        std::cout << "init" << std::endl;
         // make an object from VIPER primitives as defined in Octopus.h
         cow::get_octopus(spheres, all_pills, control_pills, masses, compliances);
+
+        tentacle_groups.resize(3);
 
         // populate viper scene
         // add spheres
@@ -115,10 +117,10 @@ class Environment {
             scene.constraints.stretch.push_back(viper::C_stretch(
                 v_ids[pill[0]], v_ids[pill[1]], p_id, d,
                 compliance));
-            // // add to tentacle group 
-            // if (index % 6 < 3 && index < 30* 6 - 3) {
-            //     tentacle_groups[index % 6].push_back(index);
-            // }
+            // add to tentacle group 
+            if (index % 6 < 3 && index < 30* 6 - 3) {
+                tentacle_groups[index % 6].push_back(index);
+            }
         }
 
         // add bend compliances?
@@ -148,31 +150,30 @@ class Environment {
 
         // rollout actions
         int reset_delay = 1400;
-        int repeat_action = 50;
+        int repeat_action = 10;
 
         std::ofstream file;
 
-        for (int i = 0; i < 300; i++){ 
-            std::cout << i << std::endl;
+        for (int i = 0; i < 10000; i++){ 
             scene.step(playback / 60.f, it_count, true);
             // running_framerate = .9 * running_framerate + .1 / simtime;
             fix(Vec3(0.0, 0.0, 0.0));
             if (i%reset_delay == 0) {
+                std::cout << resetCount << std::endl;
                 envReset();
                 resetCount++;
             }
-            // if (i%repeat_action == 0) {
-            //     auto action = randomContract();
-            //     last_action = action;
-            // }
-            std::cout << "check2" << std::endl;
+            if (i%repeat_action == 0) {
+                auto action = randomContract();
+                last_action = action;
+            }
             auto s = getState();
 
             std::string filename;
             if (resetCount%10 < 7) {
-                filename = "new-output" + std::to_string(resetCount) + ".txt";
+                filename = "output" + std::to_string(resetCount) + ".txt";
             } else {
-                filename = "new-test" + std::to_string(resetCount) + ".txt";
+                filename = "test" + std::to_string(resetCount) + ".txt";
             }
             file.open(filename, std::ios::app);
             for (float f : s) {
@@ -197,7 +198,44 @@ class Environment {
             state.push_back(x.x());
             state.push_back(x.y());
             state.push_back(x.z());
-            // TODO - add more later? also, is scene in scope?
+            Vec3 xp = scene.state.xp[i];
+            state.push_back(xp.x());
+            state.push_back(xp.y());
+            state.push_back(xp.z());
+            Vec3 d = x - xp;
+            state.push_back(d.x());
+            state.push_back(d.y());
+            state.push_back(d.z());
+            float r  = scene.state.r[i];
+            state.push_back(r);
+            float rp  = scene.state.rp[i];
+            state.push_back(rp);
+            float rd = r - rp;
+            state.push_back(rd);
+        }
+        // for cube
+        for (int ind = 0; ind < cube_ids.size(); ind++) {
+            // get id
+            int i = cube_ids[ind];
+
+            Vec3 x = scene.state.x[i];
+            state.push_back(x.x());
+            state.push_back(x.y());
+            state.push_back(x.z());
+            Vec3 xp = scene.state.xp[i];
+            state.push_back(xp.x());
+            state.push_back(xp.y());
+            state.push_back(xp.z());
+            Vec3 d = x - xp;
+            state.push_back(d.x());
+            state.push_back(d.y());
+            state.push_back(d.z());
+            float r  = scene.state.r[i];
+            state.push_back(r);
+            float rp  = scene.state.rp[i];
+            state.push_back(rp);
+            float rd = r - rp;
+            state.push_back(rd);
         }
         return state;
     }
