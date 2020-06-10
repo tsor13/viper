@@ -1092,108 +1092,6 @@ class OctopusComponent : public Component {
         }
     }
 
-    std::vector<float> getState() {
-        file.close();
-        std::vector<float> state;
-        for (int ind = 0; ind < tentacle_ids.size(); ind++) { 
-            // get id
-            int i = tentacle_ids[ind];
-
-            // add information to state vector
-            Vec3 x = v_scene->state.x[i];
-            state.push_back(x.x());
-            state.push_back(x.y());
-            state.push_back(x.z());
-            Vec3 xp = v_scene->state.xp[i];
-            state.push_back(xp.x());
-            state.push_back(xp.y());
-            state.push_back(xp.z());
-            Vec3 d = x - xp;
-            state.push_back(d.x());
-            state.push_back(d.y());
-            state.push_back(d.z());
-            float r = v_scene->state.r[i];
-            state.push_back(r);
-            float rp = v_scene->state.rp[i];
-            state.push_back(rp);
-            float rd = r - rp;
-            state.push_back(rd);
-        }
-        for (int ind = 0; ind < cube_ids.size(); ind++) { 
-            // get id
-            int i = cube_ids[ind];
-
-            // add information to state vector
-            Vec3 x = v_scene->state.x[i];
-            state.push_back(x.x());
-            state.push_back(x.y());
-            state.push_back(x.z());
-            Vec3 xp = v_scene->state.xp[i];
-            state.push_back(xp.x());
-            state.push_back(xp.y());
-            state.push_back(xp.z());
-            Vec3 d = x - xp;
-            state.push_back(d.x());
-            state.push_back(d.y());
-            state.push_back(d.z());
-            float r = v_scene->state.r[i];
-            state.push_back(r);
-            float rp = v_scene->state.rp[i];
-            state.push_back(rp);
-            float rd = r - rp;
-            state.push_back(rd);
-        }
-        return state;
-    }
-
-    void takeAction(std::vector<float> action) {
-        // for now, takes a vector of length 3, one for each tentacle arm
-        contract(0, action[0]);
-        contract(1, action[1]);
-        contract(2, action[3]);
-    }
-
-    void contract(int group_id, float ratio) {
-        for (auto id: tentacle_groups[group_id]) {
-            // std::cout << id << ": " << original_distances[id] << std::endl;
-            v_scene->constraints.stretch[id].L = ratio * original_distances[id];
-        }
-    }
-
-    void randomAction(float min = .1, float max = 2){
-        for (int i = 0; i < 3; i++) {
-            for (auto id: tentacle_groups[i]) {
-                float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-                float ratio = r * max + (1-r) * min;
-                v_scene->constraints.stretch[id].L = ratio * original_distances[id];
-            }
-        }
-    }
-
-    std::vector<float> randomContract(float min = .1, float max = 2){
-        std::vector<float> action;
-        float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        float r3 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        // map to desired range
-        r1 = r1 * min + (1-r1) * max;
-        r2 = r2 * min + (1-r2) * max;
-        r3 = r3 * min + (1-r3) * max;
-        // normalize
-        r1 *= 1 / (r1 + r2 + r3);
-        r2 *= 1 / (r1 + r2 + r3);
-        r3 *= 1 / (r1 + r2 + r3);
-        // contract and save action
-        contract(0, r1);
-        action.push_back(r1);
-        contract(1, r2);
-        action.push_back(r2);
-        contract(2, r3);
-        action.push_back(r3);
-        return action;
-    }
-
-
     void envReset() {
         int base = v_ids[0][n_cube * n_cube * n_cube];
         // reset to iniital positions around pos
@@ -1226,29 +1124,6 @@ class OctopusComponent : public Component {
         }
     }
 
-    void fix(Vec3 pos) {
-        int start = n_cube * n_cube * n_cube;
-        int base1 = v_ids[0][start];
-        int base2 = v_ids[0][start+1];
-        int base3 = v_ids[0][start+2];
-
-        v_scene->state.x[base1] = pos;
-        v_scene->state.xp[base1] = v_scene->state.x[base1];
-        v_scene->state.r[base1] = v_scene->state.ri[base1];
-        v_scene->state.rp[base1] = v_scene->state.ri[base1];
-
-        Vec3 displacement = v_scene->state.xi[base1] - v_scene->state.xi[base2];
-        v_scene->state.x[base2] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
-        v_scene->state.xp[base2] = v_scene->state.x[base2];
-        v_scene->state.r[base2] = v_scene->state.ri[base2];
-        v_scene->state.rp[base2] = v_scene->state.ri[base2];
-
-        displacement = v_scene->state.xi[base1] - v_scene->state.xi[base3];
-        v_scene->state.x[base3] = pos - Vec3(displacement.x(), displacement.y(), displacement.z());
-        v_scene->state.xp[base3] = v_scene->state.x[base3];
-        v_scene->state.r[base3] = v_scene->state.ri[base3];
-        v_scene->state.rp[base3] = v_scene->state.ri[base3];
-    }
 
     // get_transforms, as called above
     std::vector<std::vector<Mat4x4>> get_transforms() const {
