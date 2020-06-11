@@ -654,11 +654,16 @@ class OctopusComponent : public Component {
                 float w = 1.0 / masses[i];
                 v_ids[cow_id].push_back(
                     v_scene->addParticle(v.head<3>(), v[3], w));
-                // COLLISION GROUP IS SET HERE
-                int add = 0;
+                
+                int add;
                 if (i < n_cube*n_cube*n_cube) {
+                    add = 0;
+                    cube_ids.push_back(v_ids[cow_id].back());
+                } else {
                     add = 1;
+                    tentacle_ids.push_back(v_ids[cow_id].back());
                 }
+                // COLLISION GROUP IS SET HERE
                 v_scene->pInfo[v_ids[cow_id].back()].group = cow_id * 2 + add;
 
                 // add radius constraints to OctopusData data
@@ -678,6 +683,7 @@ class OctopusComponent : public Component {
                         cannonball_s[3], 0.f));
                 }
             }
+            /*
             for (int ind = 0; ind < v_ids[0].size(); ind++) { 
                 // get id
                 int i = v_ids[0][ind];
@@ -689,6 +695,7 @@ class OctopusComponent : public Component {
                     cube_ids.push_back(i);
                 }
             }
+            */
 
             // for each pill
             for (int i = 0; i < all_pills.size(); i++) {
@@ -800,7 +807,7 @@ class OctopusComponent : public Component {
 
         states.resize(simulation_length);
 
-        std::ifstream infile("output1.txt", std::ios::binary);
+        std::ifstream infile("data/output1.txt", std::ios::binary);
         std::string line;
         // int i = 0;
         // while (std::getline(infile, line)) {
