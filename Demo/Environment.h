@@ -147,12 +147,16 @@ class Environment {
 
         scene.reset();
 
+        // set gravity
+        scene.gravity_strength = 0.1;
+
+        // reset
+        envReset();
+
+        /*
         // rollout reset count
         int resetCount = 0;
         std::vector<float> last_action;
-
-        // set gravity
-        scene.gravity_strength = 0.1;
 
         // rollout actions
         int reset_delay = 1400;
@@ -190,6 +194,7 @@ class Environment {
             file << "\n";
             file.close();
         }
+        */
     }
 
     std::vector<float> getState() {
@@ -333,6 +338,7 @@ class Environment {
         contract(0, r1);
         contract(1, r2);
         contract(2, r3);
+        fix(Vec3(0, 0, 0));
         scene.step(playback / 60.f, it_count, true);
         return getState();
     }
