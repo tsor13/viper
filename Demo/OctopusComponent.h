@@ -807,7 +807,7 @@ class OctopusComponent : public Component {
 
         states.resize(simulation_length);
 
-        std::ifstream infile("data/output1.txt", std::ios::binary);
+        std::ifstream infile("output.txt", std::ios::binary);
         std::string line;
         // int i = 0;
         // while (std::getline(infile, line)) {
