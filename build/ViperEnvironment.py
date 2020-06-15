@@ -43,7 +43,7 @@ class ViperEnvironment:
         tentacle_point = state[tentacle_index:tentacle_index+3]
         cube_point = 12 * 90
         cube_point = state[cube_point:cube_point+3]
-        dist = ((tentacle_point - cube_point)**2).mean()
+        dist = np.sqrt(((tentacle_point - cube_point)**2).sum())
         reward = -dist
 
         # TERMINAL
