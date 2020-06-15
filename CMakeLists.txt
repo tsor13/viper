@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.2)
 
-project (VIPER)
+project (VIPER LANGUAGES CXX CUDA)
 
 file(GLOB VIPER_SOURCES "Viper/*.cpp")
 file(GLOB VIPER_CUDA_SOURCES "Viper/*.cu")
@@ -48,3 +48,20 @@ configure_file(${PROJECT_SOURCE_DIR}/data/mesh.bin ${PROJECT_BINARY_DIR}/mesh.bi
 
 set(Viper_SO_PATH ${PROJECT_BINARY_DIR}/libViperLib.so)
 
+
+## PYBIND
+set(PYBIND11_CPP_STANDARD -std=c++11)
+add_subdirectory(pybind11)
+# 
+# get_target_property(modifacecopts module INTERFACE_COMPILE_OPTIONS)
+# list(REMOVE_ITEM modefacecopts "-fvisibility=hidden")
+# set_target_properties(module PROPERTIES INTERFACE_COMPILE_OPTIONS "${modifacecopts}")
+# 
+# add_library(dummy MODULE
+#     Demo/example.cpp
+#     Viper/Scene.cu
+# )
+
+
+pybind11_add_module(interface Demo/interface.cpp)
+target_link_libraries(interface PRIVATE ${COMMON_LIBS} CGAL Boost::thread tbb gmp mpfr GLEW GL glfw png ViperLib)
