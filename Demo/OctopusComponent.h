@@ -151,7 +151,7 @@ class OctopusComponent : public Component {
     // reset count
     int resetCount = 0;
     std::vector<float> lastAction;
-    int simulation_length = 1400;
+    int simulation_length = 20000;
 
     // states
     std::vector<std::vector<float>> states;
