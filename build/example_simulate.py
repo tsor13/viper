@@ -9,9 +9,12 @@ s = env.reset()
 action_min, action_max = .2, 2
 
 with open('output.txt', 'w') as file:
+    rand = np.random.rand(3)
+    action = action_min * rand + (1-rand) * action_max
     for i in tqdm(range(3600)):
-        rand = np.random.rand(3)
-        action = action_min * rand + (1-rand) * action_max
+        if i % 50:
+            rand = np.random.rand(3)
+            action = action_min * rand + (1-rand) * action_max
         # action = np.array([1.5, 1.5, .2])
         state, reward = env.step(action)
         combined = np.hstack([state, action])
