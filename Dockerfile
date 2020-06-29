@@ -10,7 +10,7 @@ RUN apt-get update && \
     apt-get install -y libglew-dev && \
     apt-get install -y libcgal-dev && \
     apt-get install -y libtbb-dev && \
-    apt-get install -y python3-pip &&
+    apt-get install -y python3-pip && \
     pip3 install torch tqdm
 
 # RUN pip3 install torch torchvision
