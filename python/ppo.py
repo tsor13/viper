@@ -163,7 +163,6 @@ def rollout(model, render=False, greedy=False, train_reward=False):
         R = raw_rewards.pop() + gamma*R
         rewards.insert(0, R)
 
-    # TODO - memory correct?
     memory = [(s, a, p, r) for s, a, p, r in zip(states, actions, probs, rewards)]
     # print(total_reward)
     return memory, total_reward
@@ -230,18 +229,6 @@ def train(params):
     linspace = torch.Tensor(np.linspace(0, 1, 1000))
 
     for step in range(0, training_steps):
-        # use train reward for first 50 steps
-        # if step == 15:
-        #     env._max_episode_steps = 800
-        # elif step == 30:
-        #     env._max_episode_steps = 1200
-        # elif step == 45:
-        #     env._max_episode_steps = 1600
-        # elif step == 60:
-        #     env._max_episode_steps = 1600
-        #     repeat = 2
-        #     # gamma = .99
-
         memory, total_rewards = do_rollouts(model, num_rollouts, train_reward=train_reward)
         dataset = RolloutDataset(memory)
         loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
@@ -304,7 +291,7 @@ def train(params):
                 policy_loss = -torch.min(torch.cat([term1, term2]), 0)[0]
                 policy_loss = policy_loss.mean()
 
-                # ENTORPY LOSS
+                # ENTROPY LOSS
                 entropy = dist.entropy().mean()
                 # estimate entropy
                 # linspaces = linspace.reshape(-1, 1, 1).repeat(1, n, action_size)
@@ -325,10 +312,6 @@ def train(params):
                 # loss = value_loss + policy_loss - entropy
                 loss = value_loss + policy_loss
 
-                # print('Entropy: {:.6f}'.format(entropy.item()))
-                # print('Value: {:.6f}'.format(value_loss.item()))
-                # print('Policy: {:.6f}'.format(policy_loss.item()))
-
                 entropies.append(entropy.item())
                 value_losses.append(value_loss.item())
                 policy_losses.append(policy_loss.item())
@@ -339,10 +322,6 @@ def train(params):
                 #     loss += .00001 * param.norm(2)
 
                 weight_losses.append(loss.item() - prev_loss)
-                # print('Weight: {:.6f}'.format(loss.item() - prev_loss))
-                # if policy_loss.item() == np.inf:
-                #     pdb.set_trace()
-                #     pass
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -367,139 +346,16 @@ def train(params):
 
 model = PPONetwork(state_size, action_size)
 model = model.to(device)
-model.load_state_dict(torch.load(model_path))
+# model.load_state_dict(torch.load(model_path))
 params = {
     'model': model,
     'model path': model_path,
     'epsilon': .2,
     'learning rate': 1e-4,
     'training steps': 80,
-    'num rollouts': 50,
+    'num rollouts': 2,
     'epochs': 5,
     'batch size': 64,
 }
 train(params)
-# evaluate(model, greedy=False)
-# print(simulate(model))
-# for _ in range(10):
-#     m, r = rollout(model, True, False)
-#     print(r)
-
-# experiments = {
-#     '
-
-
-# test = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/test.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-4,
-#     'training steps': 1,
-#     'num rollouts': 5,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(test)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Test: {results}')
-# f.close()
-# 
-# default = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/default.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-4,
-#     'training steps': 80,
-#     'num rollouts': 50,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(default)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Default: {results}')
-# f.close()
-# 
-# repeat = 25
-# gamma = .95
-# repeat25 = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/repeat25.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-4,
-#     'training steps': 80,
-#     'num rollouts': 50,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(repeat25)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Repeat25: {results}')
-# f.close()
-# 
-# repeat = 10
-# gamma = .99
-# repeat10 = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/repeat10.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-4,
-#     'training steps': 80,
-#     'num rollouts': 50,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(repeat10)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Repeat10: {results}')
-# f.close()
-# 
-# repeat = 5
-# gamma = .99
-# repeat5 = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/repeat5.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-4,
-#     'training steps': 80,
-#     'num rollouts': 50,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(repeat5)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Repeat5: {results}')
-# f.close()
-# 
-# repeat = 10
-# gamma = .99
-# repeat10_small_lr = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/repeat10_small_lr.pth',
-#     'epsilon': .2,
-#     'learning rate': 3e-5,
-#     'training steps': 80,
-#     'num rollouts': 50,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(repeat10_small_lr)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Repeat10_small_lr: {results}')
-# f.close()
-# 
-# repeat = 25
-# gamma = .95
-# repeat25 = {
-#     'model': PPONetwork(state_size, action_size).to(device),
-#     'model path': 'results/repeat25_100.pth',
-#     'epsilon': .2,
-#     'learning rate': 1e-4,
-#     'training steps': 80,
-#     'num rollouts': 100,
-#     'epochs': 5,
-#     'batch size': 64,
-# }
-# results = train(repeat25)
-# f = open('results/results.txt', 'a+')
-# f.write(f'Repeat25_100: {results}')
-# f.close()
+# simulate(model)
