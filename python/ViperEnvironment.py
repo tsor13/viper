@@ -39,12 +39,24 @@ class ViperEnvironment:
 
         # REWARD
         # penalty is euclidean distance between tip of tentacle and point on cube
-        tentacle_index = 12 * 89
-        tentacle_point = state[tentacle_index:tentacle_index+3]
-        cube_point = 12 * 90
-        cube_point = state[cube_point:cube_point+3]
-        dist = np.sqrt(((tentacle_point - cube_point)**2).sum())
+        point_size = 12
+
+        tentacle_index = 71 * point_size
+        cube_index = 103 * point_size
+
+        tentacle_point = state[tentacle_index:tentacle_index + 3]
+        cube_point = state[cube_index:cube_index + 3]
+        # tentacle_velocity = state[tentacle_index+6:tentacle_index+9]
+
+        # just a test target point to see if it can learn well
+        target_point = np.array([2, 20, 7])
+        # dist = np.sqrt(((cube_point - tentacle_point)**2).sum())
+        dist = np.sqrt(((target_point - tentacle_point)**2).sum())
         reward = -dist
+        # shift by mean
+        reward += 35000 / self.max_steps
+        # scale by std
+        reward *= 1 / 3000
 
         # TERMINAL
         self.time_step += 1
