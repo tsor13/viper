@@ -149,6 +149,7 @@ class Environment {
 
         // set gravity
         scene.gravity_strength = 0.1;
+        // scene.gravity_strength = 0;
 
         // reset
         envReset();
@@ -284,9 +285,15 @@ class Environment {
         // reset to initial position around pos
         Vec3 pos = Vec3(0, 0, 0);
         // random direction for initial velocity
-        Vec3 random_vector = Vec3::Random() * 0.1;
+        // Vec3 random_vector = Vec3::Random() * 0.1;
+        Vec3 random_vector = Vec3(0, 0, 0);
         // cube displacement
-        Vec3 cube_displacement = Vec3::Random() * 10;
+        // Vec3 cube_displacement = Vec3::Random() * 10;
+        // Vec3 cube_displacement = Vec3(5, 25, 5);
+        // Vec3 cube_displacement = (Vec3::Random() - Vec3(.5, -.1, .5)) * 20;
+        Vec3 cube_displacement = (Vec3::Random() - Vec3(.5, .5, .5)) * 20;// + Vec3(0, 40, 0);
+        // Vec3 cube_displacement = (Vec3(1, 1.0, 1) - Vec3(.5, .5, .5)) * 20;// + Vec3(0, 40, 0);
+        cube_displacement[1] = 20;
         // for each sphere
         for (int ind = 0; ind < tentacle_ids.size(); ind++) {
             // get id
