@@ -11,13 +11,15 @@ class ViperEnvironment:
         # sizes of action and state vector
         self.action_size = 3
         self.state_size = 1404
+        # self.state_size = 24
 
         # action bounds
-        self.action_max = 2
+        self.action_max = 1.8
         self.action_min = .2
 
         self.time_step = 0
         self.max_steps = 2000
+        # self.max_steps = 1000
 
     def step(self, action):
         '''
@@ -35,6 +37,12 @@ class ViperEnvironment:
         self.env.step(*action)
 
         # STEP
+        # STATE
+        # for each point:
+        # 0, 1, 2: current coordinate (x, y, z)
+        # 3, 4, 5: previous coordinate (x, y, z)
+        # 6, 7, 8: current - previous (dx, dy, xz)
+        # 9, 10, 11: rotation, previous rottaion, rotation delta (rotation - previous)
         state = np.array([self.env.get_state(i) for i in range(1404)])
 
         # REWARD
@@ -46,21 +54,37 @@ class ViperEnvironment:
 
         tentacle_point = state[tentacle_index:tentacle_index + 3]
         cube_point = state[cube_index:cube_index + 3]
-        # tentacle_velocity = state[tentacle_index+6:tentacle_index+9]
+        tentacle_velocity = state[tentacle_index+6:tentacle_index+9]
+        velocity_reward = -np.sqrt((tentacle_velocity**2).sum())
+        velocity_reward = -((10*tentacle_velocity)**2).sum()
+        velocity_reward += 25000 / self.max_steps
+        velocity_reward *= 1 / 800
+        # reward equal to movement in x direction
+        # velocity_reward = tentacle_velocity[0]
 
         # just a test target point to see if it can learn well
-        target_point = np.array([2, 20, 7])
-        # dist = np.sqrt(((cube_point - tentacle_point)**2).sum())
-        dist = np.sqrt(((target_point - tentacle_point)**2).sum())
-        reward = -dist
+        target_point = np.array([0, 0, 0])
+        # dist = (cube_point - tentacle_point)**2).sum()
+        dist = np.sqrt(((cube_point - tentacle_point)**2).sum())
+        # dist = np.sqrt(((target_point - tentacle_point)**2).sum())
+        dist_reward = -dist
         # shift by mean
-        reward += 35000 / self.max_steps
+        dist_reward += 55345 / self.max_steps
         # scale by std
-        reward *= 1 / 3000
+        dist_reward *= 1 / 3000
+
+        # reward = velocity_reward + dist_reward
+        # reward = velocity_reward/2 + 10*dist_reward
+        reward = velocity_reward + dist_reward
 
         # TERMINAL
         self.time_step += 1
         done = self.time_step >= self.max_steps
+
+        # shrink state to be only end and cube
+        # tentacle_vector = state[tentacle_index: tentacle_index+point_size]
+        # cube_vector = state[cube_index: cube_index+point_size]
+        # state = np.hstack([tentacle_vector, cube_vector])
 
         return state, reward, done
 
