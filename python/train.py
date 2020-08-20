@@ -11,6 +11,7 @@ from tqdm import tqdm
 import pdb
 from RolloutDataset import RolloutDataset
 from FCNetwork import FCNetwork
+from hyperparams import params
 device = 'cuda' if torch.cuda.is_available else 'cpu'
 
 # read in rollout files
@@ -53,9 +54,10 @@ val_dataset = RolloutDataset(val_rollouts, n_ahead = n_ahead)
 action_size = len(train_dataset[0][0][0])
 state_size = len(train_dataset[0][1])
 output_size = len(train_dataset[0][2][0])
-dropout = 0
-hidden_layers = 2
-hidden_size = 1024
+model_path = params['model path']
+dropout = params['dropout']
+hidden_layers = params['hidden layers']
+hidden_size = params['hidden size']
 print(action_size, state_size, output_size)
 
 model = FCNetwork(action_size = action_size,
@@ -70,7 +72,7 @@ model = FCNetwork(action_size = action_size,
                   # action_std = action_std)
 
 model.to(device)
-# model.load_state_dict(torch.load('model.pth'))
+# model.load_state_dict(torch.load(model_path))
 
 learning_rate = 1e-4
 batch_size = 128
@@ -85,7 +87,7 @@ val_losses = []
 
 best_loss = np.inf
 
-epochs = 200
+epochs = 20
 max_batches = np.inf
 loop = tqdm(total = min(len(train_dataloader), max_batches) * epochs)
 
@@ -99,6 +101,7 @@ def step(state, deltas):
 
 for epoch in range(epochs):
     model.train()
+    # increase number to predict ahead
     new_n_ahead = min((epoch + 1) * 10, 100)
     if new_n_ahead != n_ahead:
         best_loss = np.inf
@@ -163,5 +166,5 @@ for epoch in range(epochs):
         
         if np.mean(epoch_losses) < best_loss:
             best_loss = np.mean(epoch_losses)
-            torch.save(model.state_dict(), 'model.pth')
+            torch.save(model.state_dict(), model_path)
             print('Saved! {:.6f}'.format(best_loss))
