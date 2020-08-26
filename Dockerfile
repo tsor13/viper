@@ -3,7 +3,7 @@ FROM nvidia/cuda:10.2-devel-ubuntu18.04
 # Follow VIPER GitHub instructions: https://github.com/vcg-uvic/viper
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt install -y git&& \
+    apt install -y git && \
     apt-get install -y cmake && \
     apt-get install -y xorg-dev && \
     apt-get install -y libboost-all-dev && \
@@ -11,7 +11,8 @@ RUN apt-get update && \
     apt-get install -y libcgal-dev && \
     apt-get install -y libtbb-dev && \
     apt-get install -y python3-pip && \
-    pip3 install torch tqdm
+    pip3 install torch tqdm && \
+    apt-get install -y vim
 
 # RUN pip3 install torch torchvision
 
